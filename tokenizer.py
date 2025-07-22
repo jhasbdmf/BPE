@@ -24,20 +24,28 @@ def get_all_vocab_combinations (vocab: list):
 
     return vocab_combinations 
 
-def get_all_vocab_item_frequenies_in (vocab: list, string: str):
-    freq_count = {}
+def get_all_vocab_item_frequencies_in (vocab_cand: list, string: str, all_token_frequencies: dict):
+    candidate_token_frequencies = {}
 
-    for vocab_item in vocab:
-        freq_count[vocab_item] = string.count(vocab_item)
+    for candidate in vocab_cand:
+        if candidate not in all_token_frequencies.keys():
+            all_token_frequencies[candidate] = string.count(candidate)
+        candidate_token_frequencies[candidate] = all_token_frequencies[candidate]
+        
+
+
+    return candidate_token_frequencies
     
     #print (sorted(freq_count.items(), key=lambda item: item[1], reverse=True))
 
-    return freq_count
+    #return freq_count
 
-def get_new_vocab_item_from (vocab_candidates: list, string: str):
+def get_new_vocab_item_from (vocab_candidates: list, string: str, token_frequencies: dict):
 
-    vocab_candidate_frequencies = get_all_vocab_item_frequenies_in (vocab_candidates, string)
-    best_vocab_candidate = max(vocab_candidate_frequencies, key=vocab_candidate_frequencies.get)
+    #vocab_candidate_frequencies = get_all_vocab_item_frequencies_in (vocab_candidates, string, token_frequencies)
+    #best_vocab_candidate = max(vocab_candidate_frequencies, key=vocab_candidate_frequencies.get)
+    candidate_token_frequencies = get_all_vocab_item_frequencies_in (vocab_candidates, string, token_frequencies)
+    best_vocab_candidate = max(candidate_token_frequencies, key=candidate_token_frequencies.get)
     return best_vocab_candidate
  
 
@@ -46,13 +54,15 @@ def get_new_vocab_item_from (vocab_candidates: list, string: str):
 def bpe(vocab: list, string: str, n_iter: int):
 
     new_vocab = vocab.copy()
+
+    token_freq_count = {}
     for i in range(n_iter):
         
         vocab_pairs = get_all_vocab_combinations(new_vocab)
-        new_vocab_item = get_new_vocab_item_from (vocab_pairs, string)
+        new_vocab_item = get_new_vocab_item_from (vocab_pairs, string, token_freq_count)
         print ("New token:\n", new_vocab_item)
         new_vocab.append(new_vocab_item)
-        print (new_vocab)
+        #print (new_vocab)
 
     return new_vocab
     #return get_all_vocab_item_frequenies_in(vocab_pairs, string)
@@ -74,7 +84,7 @@ print ("Initial vocabulary:\n", initial_vocabulary, "\n")
 
 print (len(get_all_vocab_combinations (initial_vocabulary)))
 
-#freq = bpe(initial_vocabulary, clean_text, 0)
+
 
 
 
