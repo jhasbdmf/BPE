@@ -59,8 +59,24 @@ def bpe1(corpus_tokens: list, n_iter: int):
             write_tokens(vocab, current_iter+1)
     return vocab
 
-def bpe (vocab: list, corpus_representation: dict, n_iter: int):
+def write_tokens1(tokens: list, n_iter: int, token_gen_duration: float):
 
+    file_name = "bpe_tokens with k = " + str(n_iter) + ".txt"
+    with open(file_name, "w") as output_file:
+        output_file.write(f"Generation of {n_iter} tokens took {elapsed:.4f} seconds")
+        for token in tokens:
+            output_file.write(f"{token}\n") 
+
+def write_tokens(tokens: list, n_iter: int, token_gen_duration: float):
+
+    file_name = "bpe_tokens with k = " + str(n_iter) + ".txt"
+    with open(file_name, "w") as output_file:
+        output_file.write(f"Generation of {n_iter} tokens took {token_gen_duration:.4f} seconds")
+        for token in tokens:
+            output_file.write(f"{token}\n") 
+
+def bpe (vocab: list, corpus_representation: dict, n_iter: int):
+    start = time.time()
     for current_iter in range(n_iter):
 
         #key_list = []
@@ -121,15 +137,16 @@ def bpe (vocab: list, corpus_representation: dict, n_iter: int):
             new_corpus_representation[tuple(new_word_type)] = word_type_frequency 
         #print ("new token ", new_token)
         corpus_representation = new_corpus_representation
+        if (current_iter+1) >= 1000 and (current_iter+1) % 200 == 0:
+            end = time.time()
+            elapsed = end - start
+            write_tokens(vocab, current_iter+1, elapsed)
     
     return vocab
 
-def write_tokens(tokens: list, n_iter: int):
 
-    file_name = "bpe_tokens with k = " + str(n_iter) + ".txt"
-    with open(file_name, "w") as output_file:
-        for token in tokens:
-            output_file.write(f"{token}\n") 
+
+
 
 with open("shakespeare.txt", "r") as input_file:
     raw_text = input_file.read()
@@ -168,7 +185,7 @@ print (type(non_tokenized_word_type_frequencies[0]))
 print (len(non_tokenized_word_type_frequencies))
 
 start = time.time()
-print(bpe(vocabulary, tokenized_word_type_frequencies, 1000))
+print(bpe(vocabulary, tokenized_word_type_frequencies, 2000))
 end = time.time()
 elapsed = end - start
 print(f"Elapsed time: {elapsed:.4f} seconds")
