@@ -148,7 +148,7 @@ def bpe (vocab: list, corpus_representation: dict, n_iter: int):
 
 
 
-with open("shakespeare.txt", "r") as input_file:
+with open("Shakespeare_clean_train.txt", "r") as input_file:
     raw_text = input_file.read()
 
 print ("Raw text length in chars:\n", len(raw_text), "\n")
