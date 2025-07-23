@@ -61,22 +61,6 @@ def get_new_vocab_item_from (vocab_candidates: list, word_frequencies: Counter, 
  
 
 
-
-def bpe1(vocab: list, string: str, n_iter: int):
-
-    new_vocab = vocab.copy()
-
-    token_freq_count = {}
-    for i in range(n_iter):
-        
-        vocab_pairs = get_all_vocab_combinations(new_vocab)
-        new_vocab_item = get_new_vocab_item_from (vocab_pairs, string, token_freq_count)
-        print ("New token:\n", new_vocab_item)
-        new_vocab.append(new_vocab_item)
-        #print (new_vocab)
-
-    return new_vocab
-
 def bpe(vocab: list, word_frequencies: Counter, n_iter: int):
 
     new_vocab = vocab.copy()
@@ -119,7 +103,3 @@ print (type(word_frequency_distribution))
 print ("bpe result:\n", bpe(initial_vocabulary, word_frequency_distribution, 100))
 
 
-
-
-
-#print ("bpe result:\n", bpe1(initial_vocabulary, clean_text, 1000))
