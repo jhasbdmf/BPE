@@ -27,7 +27,7 @@ def bpe (vocab: list, corpus_representation: dict, n_iter: int):
     start = time.time()
     for current_iter in range(n_iter):
 
-        #key_list = []
+ 
         inter_word_counter = {}
         for word_type, word_type_frequency in corpus_representation.items():
 
@@ -41,7 +41,7 @@ def bpe (vocab: list, corpus_representation: dict, n_iter: int):
 
                 #add intermediate key frequency across word types
                 #in which in occurs
-                #print ("asdasd", type(key), type(inter_word_counter))
+          
                 if not key in inter_word_counter:
                     inter_word_counter[key] = intermediate_key_frequency
                 else:
@@ -63,7 +63,7 @@ def bpe (vocab: list, corpus_representation: dict, n_iter: int):
         #in all word types of a corpus
         new_corpus_representation = {}
         for word_type, word_type_frequency in corpus_representation.items():
-            #print (word_type, len(word_type))
+       
             new_word_type = []
             i = 0
             while i < len(word_type):
@@ -116,11 +116,6 @@ for i in non_tokenized_word_type_frequencies:
     tokenized_word_type_frequencies[tuple(tokens_of_a_word_type)] = non_tokenized_word_type_frequencies[i]
 
 
-
-#for key, value in tokenized_word_type_frequencies.items():
-#    print (key, value)
-#print (tokenized_word_type_frequencies)
-
 print (type(non_tokenized_word_type_frequencies[0]))
 print (len(non_tokenized_word_type_frequencies))
 
@@ -129,8 +124,7 @@ print(bpe(vocabulary, tokenized_word_type_frequencies, 2000))
 end = time.time()
 elapsed = end - start
 print(f"Elapsed time: {elapsed:.4f} seconds")
-#generated_tokens = bpe(corpus_chars, 2000)
-#print ("bpe generated vocab:\n", generated_tokens)
+
 
 
 
