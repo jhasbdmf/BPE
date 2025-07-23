@@ -69,7 +69,7 @@ def write_tokens1(tokens: list, n_iter: int, token_gen_duration: float):
 
 def write_tokens(tokens: list, n_iter: int, token_gen_duration: float):
 
-    file_name = "bpe_tokens with k = " + str(n_iter) + ".txt"
+    file_name = "Generated_tokens/bpe_tokens with k = " + str(n_iter) + ".txt"
     with open(file_name, "w") as output_file:
         output_file.write(f"Generation of {n_iter} tokens took {token_gen_duration:.4f} seconds")
         for token in tokens:
@@ -148,7 +148,7 @@ def bpe (vocab: list, corpus_representation: dict, n_iter: int):
 
 
 
-with open("Shakespeare_clean_train.txt", "r") as input_file:
+with open("Corpus/Shakespeare_clean_train.txt", "r") as input_file:
     raw_text = input_file.read()
 
 print ("Raw text length in chars:\n", len(raw_text), "\n")
