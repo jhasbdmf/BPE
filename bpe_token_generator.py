@@ -15,58 +15,6 @@ def tokenize_naively(corpus: str):
 def count_token_frequencies_of(unique_tokens: list):
     return Counter(unique_tokens)
 
-def bpe1(corpus_tokens: list, n_iter: int):
-
-    #get unique corpus chars
-    #!!vocab should be a list to preserve addind order
-    vocab = list(set(corpus_tokens))
-
-
-    for current_iter in range (n_iter):
-
-        #count frequencies of all pairs of adjacent corpus tokens
-        token_frequencies = Counter(zip(corpus_tokens, corpus_tokens[1:]))
-
-        #print (token_frequencies )
-
-        #add most frequent adjacent token pair into dictionary
-        most_frequent_token_combination, _ = token_frequencies.most_common(1)[0]
-        new_token_element1 = most_frequent_token_combination[0]
-        new_token_element2 = most_frequent_token_combination[1]
-        new_token = new_token_element1 + new_token_element2
-   
-        print ("New token:", new_token)
-        if not new_token in vocab:
-            vocab.append(new_token)
-        else:
-            print ("!!!NON-UNIQUE TOKEN GENERATION ATTEMPT\n")
-
-        #replace tokenized corpus with another tokenized corpus
-        #in which new_token_element1 and new_token_element2 are
-        #replaced with concat(new_token_element1, new_token_element2)
-        i=0
-        new_corpus_tokens = []
-        while i < len(corpus_tokens)-1:
-            if corpus_tokens[i] == new_token_element1 and corpus_tokens[i+1] == new_token_element2:
-                new_corpus_tokens.append(new_token)
-                i += 2
-            else:
-                new_corpus_tokens.append(corpus_tokens[i])
-                i +=1
-        corpus_tokens = new_corpus_tokens
-
-        if (current_iter+1)>= 1000 and (current_iter+1) % 200 == 0:
-            write_tokens(vocab, current_iter+1)
-    return vocab
-
-def write_tokens1(tokens: list, n_iter: int, token_gen_duration: float):
-
-    file_name = "bpe_tokens with k = " + str(n_iter) + ".txt"
-    with open(file_name, "w") as output_file:
-        output_file.write(f"Generation of {n_iter} tokens took {elapsed:.4f} seconds")
-        for token in tokens:
-            output_file.write(f"{token}\n") 
-
 def write_tokens(tokens: list, n_iter: int, token_gen_duration: float):
 
     file_name = "Generated_tokens/bpe_tokens with k = " + str(n_iter) + ".txt"
@@ -98,15 +46,7 @@ def bpe (vocab: list, corpus_representation: dict, n_iter: int):
                     inter_word_counter[key] = intermediate_key_frequency
                 else:
                     inter_word_counter[key] += intermediate_key_frequency
-                #key_list.append(key)
-            #print (word_type, word_type_frequency , intra_word_counter)
-
-            #print("___________________________________________________")
-        #print (len(key_list))
-        #print (Counter(key_list))
-        #print("___________________________________________________")
-        #print (len(inter_word_counter))
-        #print (inter_word_counter)
+       
 
         new_token_tuple = max(inter_word_counter, key=inter_word_counter.get)
         new_token_element1 = new_token_tuple[0]
@@ -133,9 +73,9 @@ def bpe (vocab: list, corpus_representation: dict, n_iter: int):
                 else:
                     new_word_type.append(word_type[i])
                     i += 1
-            #print (word_type, new_word_type)
+      
             new_corpus_representation[tuple(new_word_type)] = word_type_frequency 
-        #print ("new token ", new_token)
+     
         corpus_representation = new_corpus_representation
         if (current_iter+1) >= 1000 and (current_iter+1) % 200 == 0:
             end = time.time()
