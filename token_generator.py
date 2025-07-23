@@ -57,7 +57,7 @@ def bpe(corpus_tokens: list, n_iter: int):
 
 def write_tokens(tokens: list, n_iter: int):
 
-    file_name = "bpe_tokens with k = " + str(n_iter) + ".txt"
+    file_name = "quasi_bpe_tokens with k = " + str(n_iter) + ".txt"
     with open(file_name, "w") as output_file:
         for token in tokens:
             output_file.write(f"{token}\n") 
@@ -71,8 +71,10 @@ print ("First raw text chars:\n", raw_text[:9], "\n")
 corpus_chars = get_corpus_chars(raw_text.lower())
 print ("Corpus chars:\n", corpus_chars[:100])
 
-generated_tokens = bpe(corpus_chars, 2000)
-print ("bpe generated vocab:\n", generated_tokens)
+#generated_tokens = bpe(corpus_chars, 2000)
+#print ("bpe generated vocab:\n", generated_tokens)
+
+
 
 
 
