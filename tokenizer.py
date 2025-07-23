@@ -1,8 +1,15 @@
 import nltk
 import re
+from collections import Counter
 
 def extract_letters(string: str):
     return " ".join(re.findall(r"[A-Za-z]+", string))
+
+def tokenize_naively(corpus: str):
+    return re.findall(r"[A-Za-z]+", corpus)
+
+def count_token_frequencies_of(unique_tokens: list):
+    return Counter(unique_tokens)
 
 def get_unique_chars (string: str):
     unique_chars = set()
@@ -24,34 +31,38 @@ def get_all_vocab_combinations (vocab: list):
 
     return vocab_combinations 
 
-def get_all_vocab_item_frequencies_in (vocab_cand: list, string: str, all_token_frequencies: dict):
+def count_token_frequency_in (token: str, word_frequencies: Counter):
+    
+    token_count = 0
+
+    for word, word_frequency in word_frequencies.items():
+        token_count += word.count(token) * word_frequency
+
+    return token_count
+
+
+def get_all_vocab_item_frequencies_in (vocab_cand: list, word_frequencies: str, all_token_frequencies: dict):
     candidate_token_frequencies = {}
 
     for candidate in vocab_cand:
         if candidate not in all_token_frequencies.keys():
-            all_token_frequencies[candidate] = string.count(candidate)
+            #all_token_frequencies[candidate] = corpus.count(candidate)
+            all_token_frequencies[candidate] = count_token_frequency_in (candidate, word_frequencies)
         candidate_token_frequencies[candidate] = all_token_frequencies[candidate]
-        
-
-
-    return candidate_token_frequencies
     
-    #print (sorted(freq_count.items(), key=lambda item: item[1], reverse=True))
+    return candidate_token_frequencies
 
-    #return freq_count
+def get_new_vocab_item_from (vocab_candidates: list, word_frequencies: Counter, token_frequencies: dict):
 
-def get_new_vocab_item_from (vocab_candidates: list, string: str, token_frequencies: dict):
 
-    #vocab_candidate_frequencies = get_all_vocab_item_frequencies_in (vocab_candidates, string, token_frequencies)
-    #best_vocab_candidate = max(vocab_candidate_frequencies, key=vocab_candidate_frequencies.get)
-    candidate_token_frequencies = get_all_vocab_item_frequencies_in (vocab_candidates, string, token_frequencies)
+    candidate_token_frequencies = get_all_vocab_item_frequencies_in (vocab_candidates, word_frequencies, token_frequencies)
     best_vocab_candidate = max(candidate_token_frequencies, key=candidate_token_frequencies.get)
     return best_vocab_candidate
  
 
-"write a method to count frequency of new vocab items in a corpus"
 
-def bpe(vocab: list, string: str, n_iter: int):
+
+def bpe1(vocab: list, string: str, n_iter: int):
 
     new_vocab = vocab.copy()
 
@@ -65,7 +76,22 @@ def bpe(vocab: list, string: str, n_iter: int):
         #print (new_vocab)
 
     return new_vocab
-    #return get_all_vocab_item_frequenies_in(vocab_pairs, string)
+
+def bpe(vocab: list, word_frequencies: Counter, n_iter: int):
+
+    new_vocab = vocab.copy()
+
+    token_freq_count = {}
+    for i in range(n_iter):
+        
+        vocab_pairs = get_all_vocab_combinations(new_vocab)
+        new_vocab_item = get_new_vocab_item_from (vocab_pairs, word_frequencies, token_freq_count)
+        print ("New token:\n", new_vocab_item)
+        new_vocab.append(new_vocab_item)
+        #print (new_vocab)
+
+    return new_vocab
+   
 
 
 
@@ -84,8 +110,16 @@ print ("Initial vocabulary:\n", initial_vocabulary, "\n")
 
 print (len(get_all_vocab_combinations (initial_vocabulary)))
 
+word_frequency_distribution = count_token_frequencies_of(tokenize_naively(raw_text.lower()))
+
+print (word_frequency_distribution)
+print (len(word_frequency_distribution))
+print (type(word_frequency_distribution))
+
+print ("bpe result:\n", bpe(initial_vocabulary, word_frequency_distribution, 100))
 
 
 
 
-print ("bpe result:\n", bpe(initial_vocabulary, clean_text, 1000))
+
+#print ("bpe result:\n", bpe1(initial_vocabulary, clean_text, 1000))
