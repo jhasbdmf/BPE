@@ -15,7 +15,7 @@ def bpe(corpus_tokens: list, n_iter: int):
 
     #get unique corpus chars
     #!!vocab should be a list to preserve addind order
-    vocab = set(corpus_tokens)
+    vocab = list(set(corpus_tokens))
 
 
     for current_iter in range (n_iter):
@@ -32,7 +32,10 @@ def bpe(corpus_tokens: list, n_iter: int):
         new_token = new_token_element1 + new_token_element2
    
         print ("New token:", new_token)
-        vocab.add(new_token)
+        if not new_token in vocab:
+            vocab.append(new_token)
+        else:
+            print ("!!!NON-UNIQUE TOKEN GENERATION ATTEMPT\n")
 
         #replace tokenized corpus with another tokenized corpus
         #in which new_token_element1 and new_token_element2 are
@@ -52,7 +55,7 @@ def bpe(corpus_tokens: list, n_iter: int):
             write_tokens(vocab, current_iter+1)
     return vocab
 
-def write_tokens(tokens: set, n_iter: int):
+def write_tokens(tokens: list, n_iter: int):
 
     file_name = "bpe_tokens with k = " + str(n_iter) + ".txt"
     with open(file_name, "w") as output_file:
