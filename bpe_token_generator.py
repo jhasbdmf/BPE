@@ -15,6 +15,26 @@ def tokenize_naively(corpus: str):
 def count_token_frequencies_of(unique_tokens: list):
     return Counter(unique_tokens)
 
+def get_charred_word_type_corpus_representation (corpus: str):
+
+    #this one tells how frequent each word type is in the corpus
+    non_tokenized_word_type_frequencies = count_token_frequencies_of(tokenize_naively(corpus.lower()))
+
+    #this one also tells how frequent each word type is in the corpus
+    #the difference is that here each word type is stored as
+    #an array of chars at this stage of the program
+    #later those chars will be merged into subword tokens
+    tokenized_word_type_frequencies = {}
+
+    for i in non_tokenized_word_type_frequencies:
+        tokens_of_a_word_type = get_string_chars(i)
+        tokens_of_a_word_type.append("</w>")
+        tokenized_word_type_frequencies[tuple(tokens_of_a_word_type)] = non_tokenized_word_type_frequencies[i]
+    
+    return tokenized_word_type_frequencies
+
+
+
 def write_tokens(tokens: list, n_iter: int, token_gen_duration: float):
 
     file_name = "Generated_tokens/bpe_tokens with k = " + str(n_iter) + ".txt"
@@ -91,33 +111,15 @@ def bpe (vocab: list, corpus_representation: dict, n_iter: int):
 with open("Corpus/Shakespeare_clean_train.txt", "r") as input_file:
     raw_text = input_file.read()
 
-print ("Raw text length in chars:\n", len(raw_text), "\n")
-print ("First raw text chars:\n", raw_text[:9], "\n")
+
 
 corpus_chars = get_string_chars(raw_text.lower())
 vocabulary = list(set(corpus_chars))
 vocabulary.append("</w>")
-print ("Corpus chars:\n", corpus_chars[:100])
-print ("Vocabulary is:\n", vocabulary)
-
-#this one tells how frequent each word type is in the corpus
-non_tokenized_word_type_frequencies = count_token_frequencies_of(tokenize_naively(raw_text.lower()))
 
 
-#this one also tells how frequent each word type is in the corpus
-#the difference is that here each word type is stored as
-#an array of chars at this stage of the program
-#later those chars will be merged into subword tokens
-tokenized_word_type_frequencies = {}
+tokenized_word_type_frequencies = get_charred_word_type_corpus_representation(raw_text)
 
-for i in non_tokenized_word_type_frequencies:
-    tokens_of_a_word_type = get_string_chars(i)
-    tokens_of_a_word_type.append("</w>")
-    tokenized_word_type_frequencies[tuple(tokens_of_a_word_type)] = non_tokenized_word_type_frequencies[i]
-
-
-print (type(non_tokenized_word_type_frequencies[0]))
-print (len(non_tokenized_word_type_frequencies))
 
 start = time.time()
 print(bpe(vocabulary, tokenized_word_type_frequencies, 2000))
