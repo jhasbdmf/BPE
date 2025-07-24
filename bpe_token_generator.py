@@ -19,7 +19,7 @@ def write_tokens(tokens: list, n_iter: int, token_gen_duration: float):
 
     file_name = "Generated_tokens/bpe_tokens with k = " + str(n_iter) + ".txt"
     with open(file_name, "w") as output_file:
-        output_file.write(f"Generation of {n_iter} tokens took {token_gen_duration:.4f} seconds")
+        #output_file.write(f"Generation of {n_iter} tokens took {token_gen_duration:.4f} seconds")
         for token in tokens:
             output_file.write(f"{token}\n") 
 
