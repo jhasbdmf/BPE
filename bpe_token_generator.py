@@ -1,21 +1,6 @@
-
-import re
 from collections import Counter
 import time
-from utilities import get_charred_word_type_corpus_representation
-
-
-def get_string_chars(string: str):
-    return re.findall(r"[A-Za-z]", string)
-
-#space-based tokenization
-def tokenize_naively(corpus: str):
-    return re.findall(r"[A-Za-z]+", corpus)
-
-
-
-
-
+from utilities import get_charred_word_type_corpus_representation, get_string_chars
 
 def write_tokens(tokens: list, n_iter: int, token_gen_duration: float):
 
@@ -71,7 +56,7 @@ def bpe (vocab: list, corpus_representation: dict, n_iter: int):
             while i < len(word_type):
                 if word_type[i] == new_token_element1 and word_type[i+1] == new_token_element2:
                     new_word_type.append(new_token)
-                    i+=2
+                    i += 2
                 else:
                     new_word_type.append(word_type[i])
                     i += 1
@@ -85,9 +70,6 @@ def bpe (vocab: list, corpus_representation: dict, n_iter: int):
             write_tokens(vocab, current_iter+1, elapsed)
     
     return vocab
-
-
-
 
 
 with open("Corpus/Shakespeare_clean_train.txt", "r") as input_file:
