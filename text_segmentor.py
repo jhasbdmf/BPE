@@ -59,7 +59,7 @@ def reconstruct_corpus_from (corpus_representation: dict, n_words_in_corpus: int
     #return reconstructed_corpus
     return [x for tup in reconstructed_corpus for x in tup]
 
-def tokenize_corpus(corpus: str):
+def tokenize_sequence(corpus: str):
     charred_word_types_with_frequencies_and_positions, number_of_words_in_a_corpus = get_word_type_counts_with_positions_in_a_corpus (corpus)
     corpus_tokens_compressed = merge_corpus_chars(charred_word_types_with_frequencies_and_positions, vocabulary)
     reconstructed_corpus = reconstruct_corpus_from(corpus_tokens_compressed, number_of_words_in_a_corpus)
@@ -79,7 +79,7 @@ with open("Corpus/Shakespeare_clean_train.txt", "r") as input_file:
     corpus = input_file.read()
 
 
-corpus = tokenize_corpus (corpus)
+corpus = tokenize_sequence (corpus)
 
 with open("Tokenized corpus.txt", "w") as output_file:
     for token in corpus:
