@@ -24,7 +24,7 @@ def get_word_type_counts_with_positions_in_a_corpus (corpus: str):
     return corpus_representation, len(corpus_tokens)
 
 
-def tokenize_corpus (corpus_representation: dict, vocab: list):
+def merge_corpus_chars (corpus_representation: dict, vocab: list):
 
     for vocab_item in vocab:
     
@@ -59,6 +59,11 @@ def reconstruct_corpus_from (corpus_representation: dict, n_words_in_corpus: int
     #return reconstructed_corpus
     return [x for tup in reconstructed_corpus for x in tup]
 
+def tokenize_corpus(corpus: str):
+    charred_word_types_with_frequencies_and_positions, number_of_words_in_a_corpus = get_word_type_counts_with_positions_in_a_corpus (corpus)
+    corpus_tokens_compressed = merge_corpus_chars(charred_word_types_with_frequencies_and_positions, vocabulary)
+    reconstructed_corpus = reconstruct_corpus_from(corpus_tokens_compressed, number_of_words_in_a_corpus)
+    return reconstructed_corpus
 
 #read vocab from a .txt file
 
@@ -70,31 +75,15 @@ vocabulary = vocabulary.split("\n")
 if vocabulary[len(vocabulary)-1] == "":
     vocabulary.pop()
 
-with open("Corpus/Shakespeare_clean_valid.txt", "r") as validation_file:
-    corpus = validation_file.read()
-#corpus = corpus.replace(" ", "</w>")
-#print (corpus[:100])
+with open("Corpus/Shakespeare_clean_train.txt", "r") as input_file:
+    corpus = input_file.read()
 
-charred_word_types_with_frequencies_and_positions, number_of_words_in_a_corpus = get_word_type_counts_with_positions_in_a_corpus (corpus)
 
-#for i in charred_word_types_with_frequencies_and_positions:
-#    print (i, charred_word_types_with_frequencies_and_positions[i])
-
-corpus_tokens_compressed = tokenize_corpus(charred_word_types_with_frequencies_and_positions, vocabulary)
-
-reconstructed_corpus = reconstruct_corpus_from(corpus_tokens_compressed, number_of_words_in_a_corpus)
-
-print (reconstructed_corpus)
+corpus = tokenize_corpus (corpus)
 
 with open("Tokenized corpus.txt", "w") as output_file:
-    for i in reconstructed_corpus:
-        token_to_print = i.replace("</w>", " ")
-        token_to_print += "_"
-        output_file.write(token_to_print)
+    for token in corpus:
+        output_file.write(f"{token}\n")
 
-
-print (len(tokenize_corpus(charred_word_types_with_frequencies_and_positions, vocabulary)))
-
-print (number_of_words_in_a_corpus)
 
 
