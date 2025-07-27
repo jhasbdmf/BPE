@@ -89,8 +89,8 @@ counts_of_4_grams = get_n_gram_counts_from(MAX_N_GRAM_LENGTH, corpus_tokens)
 
 
 
-#for i in n_gram_counts.most_common(100):
-#    print (i)
+for i in counts_of_4_grams.most_common(100):
+    print (i)
 #for n_gram in n_gram_counts:
 #    n_gram_counts[n_gram] /= len(n_gram_list)
 
@@ -110,12 +110,15 @@ while True:
     input_string = input("Give me three words separated by single spaces to autocomplete: ")
     #input_string = input_string.strip()
     for _ in range(10):
-        input_string_tail = tuple(tokenize_sequence(input_string)[-(MAX_N_GRAM_LENGTH-1):])
+  
+        input_string_tail_tokens = tokenize_sequence(input_string)[-(MAX_N_GRAM_LENGTH-1):]
+     
+        input_string_tail = tuple(input_string_tail_tokens)
 
         print ("input ngram: ", input_string_tail)
 
         next_token = get_next_most_probable_token_after(input_string_tail, sorted_4_grams, counts_of_4_grams)
-        input_string += next_token
+        input_string += " " + next_token
         print ("Next token is: ", next_token)
         print ("Input sequence now is: ", input_string)
     
