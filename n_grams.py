@@ -50,7 +50,7 @@ def get_n_gram_counts_from (n: int, corpus_tokens: list):
             for j in range(1, N_GRAM_LENGTH):
                 n_gram.append(corpus_tokens[token_index + j])
             n_gram_list.append(tuple(n_gram))
-            
+
     return Counter(n_gram_list)
 
 with open("Tokenized corpus.txt", "r") as tokenized_corpus_file:
@@ -66,16 +66,7 @@ if corpus_tokens[len(corpus_tokens)-1] == "":
 #print (type(corpus_tokens))
 N_GRAM_LENGTH = 4
 counts_of_4_grams = get_n_gram_counts_from(N_GRAM_LENGTH, corpus_tokens)
-#n_gram_list = []
 
-#for token_index, token in enumerate(corpus_tokens):
-#    if (token_index + N_GRAM_LENGTH - 1) < len (corpus_tokens):
-#        n_gram = [token]
-#        for j in range(1, N_GRAM_LENGTH):
-#            n_gram.append(corpus_tokens[token_index + j])
-#        n_gram_list.append(tuple(n_gram))
-
-#n_gram_counts = Counter(n_gram_list)
 n_gram_counts = counts_of_4_grams
 
 for i in n_gram_counts.most_common(100):
