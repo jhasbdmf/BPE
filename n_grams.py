@@ -2,9 +2,6 @@ from collections import Counter
 from text_segmentor import tokenize_sequence
 
 
-def get_search_key_of_an_n_gram(n_gram: tuple, n: int):
-    return n_gram[:n-1]
-
 def get_leftmost_index_of_in (n_gram_prefix: tuple, n_gram_list: list):
 
     n = len(n_gram_prefix)
@@ -44,6 +41,18 @@ def get_rightmost_index_of_in (n_gram_prefix: tuple, n_gram_list: list):
 
     return result
 
+def get_n_gram_counts_from (n: int, corpus_tokens: list):
+    n_gram_list = []
+   
+    for token_index, token in enumerate(corpus_tokens):
+        if (token_index + N_GRAM_LENGTH - 1) < len (corpus_tokens):
+            n_gram = [token]
+            for j in range(1, N_GRAM_LENGTH):
+                n_gram.append(corpus_tokens[token_index + j])
+            n_gram_list.append(tuple(n_gram))
+            
+    return Counter(n_gram_list)
+
 with open("Tokenized corpus.txt", "r") as tokenized_corpus_file:
     corpus_tokens = tokenized_corpus_file.read()
 
@@ -55,17 +64,19 @@ if corpus_tokens[len(corpus_tokens)-1] == "":
 
 #print (corpus_tokens)
 #print (type(corpus_tokens))
-
-n_gram_list = []
 N_GRAM_LENGTH = 4
-for token_index, token in enumerate(corpus_tokens):
-    if (token_index + N_GRAM_LENGTH - 1) < len (corpus_tokens):
-        n_gram = [token]
-        for j in range(1, N_GRAM_LENGTH):
-            n_gram.append(corpus_tokens[token_index + j])
-        n_gram_list.append(tuple(n_gram))
+counts_of_4_grams = get_n_gram_counts_from(N_GRAM_LENGTH, corpus_tokens)
+#n_gram_list = []
 
-n_gram_counts = Counter(n_gram_list)
+#for token_index, token in enumerate(corpus_tokens):
+#    if (token_index + N_GRAM_LENGTH - 1) < len (corpus_tokens):
+#        n_gram = [token]
+#        for j in range(1, N_GRAM_LENGTH):
+#            n_gram.append(corpus_tokens[token_index + j])
+#        n_gram_list.append(tuple(n_gram))
+
+#n_gram_counts = Counter(n_gram_list)
+n_gram_counts = counts_of_4_grams
 
 for i in n_gram_counts.most_common(100):
     print (i)
