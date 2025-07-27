@@ -114,19 +114,6 @@ while True:
 
         print ("input ngram: ", input_string_tail)
 
-        #left_index = get_leftmost_index_of_in(input_string_tail, sorted_n_grams)
-        #right_index = get_rightmost_index_of_in(input_string_tail, sorted_n_grams)
-        #if left_index > -1 and right_index > -1 and right_index >= left_index:
-        #    print (sorted_n_grams[left_index:(right_index+1)])
-        ##    max_frequency, n_gram_with_max_frequency = 0, ()
-        #    for most_frequent_n_gram_candidate in sorted_n_grams[left_index:(right_index+1)]:
-        #        print (most_frequent_n_gram_candidate, n_gram_counts[most_frequent_n_gram_candidate])
-        #        if n_gram_counts[most_frequent_n_gram_candidate] > max_frequency:
-        #            max_frequency = n_gram_counts[most_frequent_n_gram_candidate]
-        #            n_gram_with_max_frequency = most_frequent_n_gram_candidate
-        #    next_token = n_gram_with_max_frequency[len(n_gram_with_max_frequency)-1].replace("</w>", " ")
-        #else:
-        #    next_token = "and "
         next_token = get_next_most_probable_token_after(input_string_tail, sorted_4_grams, counts_of_4_grams)
         input_string += next_token
         print ("Next token is: ", next_token)
