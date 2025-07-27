@@ -2,8 +2,6 @@ from collections import Counter
 from text_segmentor import tokenize_sequence
 
 
-
-
 def get_n_gram_counts_from (n: int, corpus_tokens: list):
     n_gram_list = []
    
@@ -55,7 +53,7 @@ def get_rightmost_index_of_in (n_gram_prefix: tuple, n_gram_list: list):
 
     return result
 
-def get_next_most_probable_token_after(sequence: list, sorted_n_grams: list):
+def get_next_most_probable_token_after(sequence: list, sorted_n_grams: list, n_gram_counts: list):
 
     left_index = get_leftmost_index_of_in(sequence, sorted_n_grams)
     right_index = get_rightmost_index_of_in(sequence, sorted_n_grams)
@@ -89,14 +87,14 @@ if corpus_tokens[len(corpus_tokens)-1] == "":
 MAX_N_GRAM_LENGTH = 4
 counts_of_4_grams = get_n_gram_counts_from(MAX_N_GRAM_LENGTH, corpus_tokens)
 
-n_gram_counts = counts_of_4_grams
 
-for i in n_gram_counts.most_common(100):
-    print (i)
+
+#for i in n_gram_counts.most_common(100):
+#    print (i)
 #for n_gram in n_gram_counts:
 #    n_gram_counts[n_gram] /= len(n_gram_list)
 
-sorted_n_grams = sorted(n_gram_counts)
+sorted_4_grams = sorted(counts_of_4_grams)
 
 #with open("n_grams.txt", "w") as output_file:
 #    for i in sorted_n_grams:
@@ -129,7 +127,7 @@ while True:
         #    next_token = n_gram_with_max_frequency[len(n_gram_with_max_frequency)-1].replace("</w>", " ")
         #else:
         #    next_token = "and "
-        next_token = get_next_most_probable_token_after(input_string_tail, sorted_n_grams)
+        next_token = get_next_most_probable_token_after(input_string_tail, sorted_4_grams, counts_of_4_grams)
         input_string += next_token
         print ("Next token is: ", next_token)
         print ("Input sequence now is: ", input_string)
