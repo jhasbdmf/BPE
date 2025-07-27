@@ -45,9 +45,9 @@ def get_n_gram_counts_from (n: int, corpus_tokens: list):
     n_gram_list = []
    
     for token_index, token in enumerate(corpus_tokens):
-        if (token_index + N_GRAM_LENGTH - 1) < len (corpus_tokens):
+        if (token_index + n - 1) < len (corpus_tokens):
             n_gram = [token]
-            for j in range(1, N_GRAM_LENGTH):
+            for j in range(1, n):
                 n_gram.append(corpus_tokens[token_index + j])
             n_gram_list.append(tuple(n_gram))
 
