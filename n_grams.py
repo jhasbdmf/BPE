@@ -69,7 +69,7 @@ def get_next_most_probable_token_after(sequence: list, sorted_n_grams: list, n_g
         #next_token = n_gram_with_max_frequency[len(n_gram_with_max_frequency)-1].replace("</w>", " ")
         next_token = n_gram_with_max_frequency[len(n_gram_with_max_frequency)-1]
     else:
-        next_token = "and "
+        next_token = "and</w>"
     return next_token
 
 
@@ -112,7 +112,7 @@ while True:
      
     
     #input_string = input_string.strip()
-    for _ in range(10):
+    for _ in range(20):
         input_string_tail_tokens = tuple(input_string_tokens[-(MAX_N_GRAM_LENGTH-1):])
         #input_string_tail_tokens = tokenize_sequence(input_string)[-(MAX_N_GRAM_LENGTH-1):]
      
