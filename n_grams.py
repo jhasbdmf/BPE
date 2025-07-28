@@ -113,11 +113,11 @@ while True:
   
         input_string_tail_tokens = tokenize_sequence(input_string)[-(MAX_N_GRAM_LENGTH-1):]
      
-        input_string_tail = tuple(input_string_tail_tokens)
+        input_string_tail_tokens = tuple(input_string_tail_tokens)
 
-        print ("input ngram: ", input_string_tail)
+        print ("input ngram: ", input_string_tail_tokens)
 
-        next_token = get_next_most_probable_token_after(input_string_tail, sorted_4_grams, counts_of_4_grams)
+        next_token = get_next_most_probable_token_after(input_string_tail_tokens, sorted_4_grams, counts_of_4_grams)
         input_string += " " + next_token
         print ("Next token is: ", next_token)
         print ("Input sequence now is: ", input_string)
