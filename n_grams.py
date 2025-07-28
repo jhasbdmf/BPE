@@ -108,17 +108,23 @@ sorted_4_grams = sorted(counts_of_4_grams)
 
 while True:
     input_string = input("Give me three words separated by single spaces to autocomplete: ")
+    input_string_tokens = tokenize_sequence(input_string)
+     
+    
     #input_string = input_string.strip()
     for _ in range(10):
-  
-        input_string_tail_tokens = tokenize_sequence(input_string)[-(MAX_N_GRAM_LENGTH-1):]
+        input_string_tail_tokens = tuple(input_string_tokens[-(MAX_N_GRAM_LENGTH-1):])
+        #input_string_tail_tokens = tokenize_sequence(input_string)[-(MAX_N_GRAM_LENGTH-1):]
      
-        input_string_tail_tokens = tuple(input_string_tail_tokens)
+        #input_string_tail_tokens = tuple(input_string_tail_tokens)
 
         print ("input ngram: ", input_string_tail_tokens)
 
         next_token = get_next_most_probable_token_after(input_string_tail_tokens, sorted_4_grams, counts_of_4_grams)
-        input_string += " " + next_token
+        input_string_tokens.append(next_token)
+
+        #input_string += " " + next_token
         print ("Next token is: ", next_token)
-        print ("Input sequence now is: ", input_string)
+        print ("Input sequence now is: ", "".join(input_string_tokens).replace("</w>"," "))
+        #print ("Input sequence now is: ", input_string)
     
