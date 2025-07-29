@@ -2,6 +2,8 @@ from collections import Counter
 from text_segmentor import tokenize_sequence
 
 
+
+#llm rewrote my method which generated n_grams with a nested loop
 def get_n_gram_counts_from(n: int, corpus_tokens: list):
     # Build n sliding iterators over the token list
     n_gram_iterators = [corpus_tokens[i:] for i in range(n)]
@@ -64,21 +66,32 @@ def get_rightmost_index_of_in (n_gram_prefix: tuple, n_gram_list: list):
 
 def get_next_most_probable_token_after(sequence: list, sorted_n_grams: list, n_gram_counts: list):
 
-    left_index = get_leftmost_index_of_in(sequence, sorted_n_grams)
-    right_index = get_rightmost_index_of_in(sequence, sorted_n_grams)
+    next_token_found = False
+    for i in range(0, len(sorted_n_grams)):
 
-    if left_index > -1 and right_index > -1 and right_index >= left_index:
-        #print (sorted_n_grams[left_index:(right_index+1)])
-        max_frequency, n_gram_with_max_frequency = 0, ()
-        for most_frequent_n_gram_candidate in sorted_n_grams[left_index:(right_index+1)]:
-            #print (most_frequent_n_gram_candidate, n_gram_counts[most_frequent_n_gram_candidate])
-            if n_gram_counts[most_frequent_n_gram_candidate] > max_frequency:
-                max_frequency = n_gram_counts[most_frequent_n_gram_candidate]
-                n_gram_with_max_frequency = most_frequent_n_gram_candidate
-        #next_token = n_gram_with_max_frequency[len(n_gram_with_max_frequency)-1].replace("</w>", " ")
-        next_token = n_gram_with_max_frequency[len(n_gram_with_max_frequency)-1]
-    else:
-        next_token = "and</w>"
+        left_index = get_leftmost_index_of_in(sequence[i:], sorted_n_grams[i])
+        right_index = get_rightmost_index_of_in(sequence[i:], sorted_n_grams[i])
+
+        if left_index > -1 and right_index > -1 and right_index >= left_index:
+
+            #print (sorted_n_grams[left_index:(right_index+1)])
+
+            max_frequency, n_gram_with_max_frequency = 0, ()
+            for most_frequent_n_gram_candidate in sorted_n_grams[i][left_index:(right_index+1)]:
+
+                #print (most_frequent_n_gram_candidate, n_gram_counts[most_frequent_n_gram_candidate])
+
+                if n_gram_counts[i][most_frequent_n_gram_candidate] > max_frequency:
+                    max_frequency = n_gram_counts[i][most_frequent_n_gram_candidate]
+                    n_gram_with_max_frequency = most_frequent_n_gram_candidate
+            
+            next_token = n_gram_with_max_frequency[len(n_gram_with_max_frequency)-1]
+            next_token_found = True
+            break
+
+    if not next_token_found:
+        next_token = "or</w>"
+
     return next_token
 
 #def get_next_token_via_interpolation ()
@@ -94,9 +107,14 @@ if corpus_tokens[len(corpus_tokens)-1] == "":
 
 MAX_N_GRAM_LENGTH = 4
 
+counts_of_n_grams, sorted_n_grams = [], []
+for i in range (MAX_N_GRAM_LENGTH, 1, -1):
+    counts_of_i_grams, sorted_i_grams = get_n_grams_infos_from(i, corpus_tokens)
+    counts_of_n_grams.append(counts_of_i_grams)
+    sorted_n_grams.append(sorted_i_grams)
 #counts_of_2_grams, sorted_2_grams = get_n_grams_infos_from(2, corpus_tokens)
 #counts_of_3_grams, sorted_3_grams = get_n_grams_infos_from(3, corpus_tokens)
-counts_of_4_grams, sorted_4_grams = get_n_grams_infos_from(4, corpus_tokens)
+#counts_of_4_grams, sorted_4_grams = get_n_grams_infos_from(4, corpus_tokens)
 
 
 
@@ -105,10 +123,10 @@ while True:
     input_string = input("Give me 3 words separated by single spaces to autocomplete: ")
     input_string_tokens = tokenize_sequence(input_string)
      
-    for _ in range(10):
+    for _ in range(200):
         input_string_tail_tokens = tuple(input_string_tokens[-(MAX_N_GRAM_LENGTH-1):])
-        print ("input ngram: ", input_string_tail_tokens)
-        next_token = get_next_most_probable_token_after(input_string_tail_tokens, sorted_4_grams, counts_of_4_grams)
+        #print ("input ngram: ", input_string_tail_tokens)
+        next_token = get_next_most_probable_token_after(input_string_tail_tokens, sorted_n_grams, counts_of_n_grams)
         input_string_tokens.append(next_token)
-        print ("Next token is: ", next_token)
-        print ("Input sequence now is: ", "".join(input_string_tokens).replace("</w>"," "))
+        #print ("Next token is: ", next_token)
+    print ("Generated sequence now is: ", "".join(input_string_tokens).replace("</w>"," "))
