@@ -64,7 +64,7 @@ def get_rightmost_index_of_in (n_gram_prefix: tuple, n_gram_list: list):
     return result
 
 
-def get_next_most_probable_token_after(sequence: list, sorted_n_grams: list, n_gram_counts: list):
+def get_next_most_probable_token_after_via_backoff(sequence: list, sorted_n_grams: list, n_gram_counts: list):
 
     next_token_found = False
     for i in range(0, len(sorted_n_grams)):
@@ -94,8 +94,6 @@ def get_next_most_probable_token_after(sequence: list, sorted_n_grams: list, n_g
 
     return next_token
 
-#def get_next_token_via_interpolation ()
-
 
 with open("Tokenized corpus.txt", "r") as tokenized_corpus_file:
     corpus_tokens = tokenized_corpus_file.read()
@@ -112,11 +110,6 @@ for i in range (MAX_N_GRAM_LENGTH, 1, -1):
     counts_of_i_grams, sorted_i_grams = get_n_grams_infos_from(i, corpus_tokens)
     counts_of_n_grams.append(counts_of_i_grams)
     sorted_n_grams.append(sorted_i_grams)
-#counts_of_2_grams, sorted_2_grams = get_n_grams_infos_from(2, corpus_tokens)
-#counts_of_3_grams, sorted_3_grams = get_n_grams_infos_from(3, corpus_tokens)
-#counts_of_4_grams, sorted_4_grams = get_n_grams_infos_from(4, corpus_tokens)
-
-
 
 
 while True:
@@ -125,8 +118,7 @@ while True:
      
     for _ in range(200):
         input_string_tail_tokens = tuple(input_string_tokens[-(MAX_N_GRAM_LENGTH-1):])
-        #print ("input ngram: ", input_string_tail_tokens)
-        next_token = get_next_most_probable_token_after(input_string_tail_tokens, sorted_n_grams, counts_of_n_grams)
+        next_token = get_next_most_probable_token_after_via_backoff(input_string_tail_tokens, sorted_n_grams, counts_of_n_grams)
         input_string_tokens.append(next_token)
-        #print ("Next token is: ", next_token)
+     
     print ("Generated sequence now is: ", "".join(input_string_tokens).replace("</w>"," "))
