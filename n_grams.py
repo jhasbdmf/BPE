@@ -167,7 +167,7 @@ corpus_tokens = corpus_tokens.split("\n")
 if corpus_tokens[len(corpus_tokens)-1] == "":
     corpus_tokens.pop()
 
-MAX_N_GRAM_LENGTH = 4
+MAX_N_GRAM_LENGTH = 6
 
 counts_of_n_grams, sorted_n_grams = [], []
 for i in range (MAX_N_GRAM_LENGTH, 0, -1):
@@ -175,8 +175,11 @@ for i in range (MAX_N_GRAM_LENGTH, 0, -1):
     counts_of_n_grams.append(counts_of_i_grams)
     sorted_n_grams.append(sorted_i_grams)
 
-perplexity = get_perplexity_score_of_via ("valid", counts_of_n_grams, MAX_N_GRAM_LENGTH)
-print (f"For n = {MAX_N_GRAM_LENGTH} perplexity is equal to {perplexity}")
+
+for i in range(1, MAX_N_GRAM_LENGTH + 1):
+ 
+    perplexity = get_perplexity_score_of_via ("valid", counts_of_n_grams[-i:], i)
+    print (f"For n = {i} perplexity is equal to {perplexity}")
 
 #go_into_generation_mode ()
 
