@@ -108,7 +108,11 @@ def go_into_generation_mode ():
         
         print ("Generated sequence now is: ", "".join(input_string_tokens).replace("</w>"," "))
 
-def get_perplexity_score_of_via(corpus_segment: str, n_gram_counts: list, max_n_gram_len: int, backoff_discount_factor: float):
+def get_perplexity_score_of_via(corpus_segment: str, 
+                                n_gram_counts: list, 
+                                max_n_gram_len: int, 
+                                backoff_discounter: float = 0.75
+                            ):
 
     with open(f"Tokenized {corpus_segment} set.txt", "r") as tokenized_corpus_file:
         corpus_tokens = tokenized_corpus_file.read()
@@ -123,19 +127,26 @@ def get_perplexity_score_of_via(corpus_segment: str, n_gram_counts: list, max_n_
     for i in range (max_n_gram_len - 1, len (corpus_tokens)-1):
         sequence = tuple(corpus_tokens[i- max_n_gram_len + 1 : i+1])
         n_gram_found = False
-        for j in range(len(n_gram_counts)):
+        for j in range(max_n_gram_len):
             
             sequence_freq = n_gram_counts[j][sequence[j:]]
-            #if sequence[j:] in n_gram_counts[j]:
+         
             if sequence_freq > 0:
-                current_log_P = (backoff_discount_factor ** j) * sequence_freq 
+             
+          
+                
+                #we have not backed off to a unigram yet, because
+                #length (current n_gram without the last element) > 0 
                 if len (sequence[j:-1]) > 0:
-                    
                     perplexity_divisor = n_gram_counts[j+1][sequence[j:-1]]
-                    
+                    current_log_P = (sequence_freq - backoff_discounter) / perplexity_divisor 
+
+                #we have backed off to a unigram when the
+                #length (current n_gram without the last element) = 0 
                 else:
                     perplexity_divisor = total_number_of_unigrams
-                current_log_P /= perplexity_divisor
+                    current_log_P = sequence_freq / perplexity_divisor 
+         
                 net_log_P += math.log(current_log_P) 
 
                 n_gram_found = True
