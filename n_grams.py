@@ -94,6 +94,18 @@ def get_next_most_probable_token_after_via_backoff(sequence: list, sorted_n_gram
 
     return next_token
 
+def go_into_generation_mode ():
+    while True:
+        input_string = input("Give me 3 words separated by single spaces to autocomplete: ")
+        input_string_tokens = tokenize_sequence(input_string)
+        
+        for _ in range(200):
+            input_string_tail_tokens = tuple(input_string_tokens[-(MAX_N_GRAM_LENGTH-1):])
+            next_token = get_next_most_probable_token_after_via_backoff(input_string_tail_tokens, sorted_n_grams, counts_of_n_grams)
+            input_string_tokens.append(next_token)
+        
+        print ("Generated sequence now is: ", "".join(input_string_tokens).replace("</w>"," "))
+
 
 with open("Tokenized corpus.txt", "r") as tokenized_corpus_file:
     corpus_tokens = tokenized_corpus_file.read()
@@ -111,14 +123,5 @@ for i in range (MAX_N_GRAM_LENGTH, 1, -1):
     counts_of_n_grams.append(counts_of_i_grams)
     sorted_n_grams.append(sorted_i_grams)
 
+go_into_generation_mode ()
 
-while True:
-    input_string = input("Give me 3 words separated by single spaces to autocomplete: ")
-    input_string_tokens = tokenize_sequence(input_string)
-     
-    for _ in range(200):
-        input_string_tail_tokens = tuple(input_string_tokens[-(MAX_N_GRAM_LENGTH-1):])
-        next_token = get_next_most_probable_token_after_via_backoff(input_string_tail_tokens, sorted_n_grams, counts_of_n_grams)
-        input_string_tokens.append(next_token)
-     
-    print ("Generated sequence now is: ", "".join(input_string_tokens).replace("</w>"," "))
