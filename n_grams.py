@@ -1,4 +1,5 @@
 from collections import Counter
+import math
 from text_segmentor import tokenize_sequence
 
 
@@ -94,6 +95,7 @@ def get_next_most_probable_token_after_via_backoff(sequence: list, sorted_n_gram
 
     return next_token
 
+
 def go_into_generation_mode ():
     while True:
         input_string = input("Give me 3 words separated by single spaces to autocomplete: ")
@@ -106,18 +108,47 @@ def go_into_generation_mode ():
         
         print ("Generated sequence now is: ", "".join(input_string_tokens).replace("</w>"," "))
 
-def get_perplexity_score_of_via(corpul_segment: str, sorted_n_grams: list, n_gram_counts: list):
+def get_perplexity_score_of_via(corpus_segment: str, n_gram_counts: list, max_n_gram_len: int, backoff_discount_factor: float):
 
-    with open("Tokenized corpus.txt", "r") as tokenized_corpus_file:
+    with open(f"Tokenized {corpus_segment} set.txt", "r") as tokenized_corpus_file:
         corpus_tokens = tokenized_corpus_file.read()
 
-    perplexity_score = 0
+    corpus_tokens = corpus_tokens.split("\n")
+    if corpus_tokens[len(corpus_tokens)-1] == "":
+        corpus_tokens.pop()
+
+    total_number_of_unigrams = sum(n_gram_counts[-1].values())
+    net_log_P = 0
+
+    for i in range (max_n_gram_len - 1, len (corpus_tokens)-1):
+        sequence = tuple(corpus_tokens[i- max_n_gram_len + 1 : i+1])
+        n_gram_found = False
+        for j in range(len(n_gram_counts)):
+            
+            sequence_freq = n_gram_counts[j][sequence[j:]]
+            #if sequence[j:] in n_gram_counts[j]:
+            if sequence_freq > 0:
+                current_log_P = (backoff_discount_factor ** j) * sequence_freq 
+                if len (sequence[j:-1]) > 0:
+                    
+                    perplexity_divisor = n_gram_counts[j+1][sequence[j:-1]]
+                    
+                else:
+                    perplexity_divisor = total_number_of_unigrams
+                current_log_P /= perplexity_divisor
+                net_log_P += math.log(current_log_P) 
+
+                n_gram_found = True
+                break
+        if not n_gram_found:
+            print ("NO N_GRAM FOUND FOR: ", sequence[j:])
+    len_corpus = len (corpus_tokens) - max_n_gram_len
+    perplexity = math.exp(-1* net_log_P / len_corpus)
+ 
+    return perplexity
 
 
-    return perplexity_score
-
-
-with open("Tokenized corpus.txt", "r") as tokenized_corpus_file:
+with open("Tokenized train set.txt", "r") as tokenized_corpus_file:
     corpus_tokens = tokenized_corpus_file.read()
 
 #remove empty string from end of vocab should it have been read into it
@@ -125,13 +156,16 @@ corpus_tokens = corpus_tokens.split("\n")
 if corpus_tokens[len(corpus_tokens)-1] == "":
     corpus_tokens.pop()
 
-MAX_N_GRAM_LENGTH = 4
+MAX_N_GRAM_LENGTH = 5
 
 counts_of_n_grams, sorted_n_grams = [], []
-for i in range (MAX_N_GRAM_LENGTH, 1, -1):
+for i in range (MAX_N_GRAM_LENGTH, 0, -1):
     counts_of_i_grams, sorted_i_grams = get_n_grams_infos_from(i, corpus_tokens)
     counts_of_n_grams.append(counts_of_i_grams)
     sorted_n_grams.append(sorted_i_grams)
 
-go_into_generation_mode ()
+perplexity = get_perplexity_score_of_via ("valid", counts_of_n_grams, MAX_N_GRAM_LENGTH, 0.4)
+print (f"For n = {MAX_N_GRAM_LENGTH} perplexity is equal to {perplexity}")
+
+#go_into_generation_mode ()
 

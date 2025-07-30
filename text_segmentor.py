@@ -75,7 +75,7 @@ vocabulary = vocabulary.split("\n")
 if vocabulary[len(vocabulary)-1] == "":
     vocabulary.pop()
 
-CORPUS_SEGMENT = "valid"
+CORPUS_SEGMENT = "train"
 with open(f"Corpus/Shakespeare_clean_{CORPUS_SEGMENT}.txt", "r") as input_file:
     corpus = input_file.read()
 
