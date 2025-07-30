@@ -75,13 +75,14 @@ vocabulary = vocabulary.split("\n")
 if vocabulary[len(vocabulary)-1] == "":
     vocabulary.pop()
 
-with open("Corpus/Shakespeare_clean_train.txt", "r") as input_file:
+CORPUS_SEGMENT = "valid"
+with open(f"Corpus/Shakespeare_clean_{CORPUS_SEGMENT}.txt", "r") as input_file:
     corpus = input_file.read()
 
 
 corpus = tokenize_sequence (corpus)
 
-with open("Tokenized corpus.txt", "w") as output_file:
+with open(f"Tokenized {CORPUS_SEGMENT} set.txt", "w") as output_file:
     for token in corpus:
         output_file.write(f"{token}\n")
 

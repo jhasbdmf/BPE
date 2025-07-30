@@ -106,6 +106,16 @@ def go_into_generation_mode ():
         
         print ("Generated sequence now is: ", "".join(input_string_tokens).replace("</w>"," "))
 
+def get_perplexity_score_of_via(corpul_segment: str, sorted_n_grams: list, n_gram_counts: list):
+
+    with open("Tokenized corpus.txt", "r") as tokenized_corpus_file:
+        corpus_tokens = tokenized_corpus_file.read()
+
+    perplexity_score = 0
+
+
+    return perplexity_score
+
 
 with open("Tokenized corpus.txt", "r") as tokenized_corpus_file:
     corpus_tokens = tokenized_corpus_file.read()
