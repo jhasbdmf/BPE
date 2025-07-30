@@ -2,15 +2,15 @@ from collections import Counter
 import time
 from utilities import get_charred_word_type_corpus_representation, get_string_chars
 
-def write_tokens(tokens: list, n_iter: int, token_gen_duration: float):
+def write_tokens(tokens: list, n_iter: int, corpus_segment: str, token_gen_duration: float):
 
-    file_name = "Generated_tokens/bpe_tokens with k = " + str(n_iter) + ".txt"
+    file_name = f"Generated_tokens/bpe_tokens of {corpus_segment} set with k = {n_iter}.txt "
     with open(file_name, "w") as output_file:
         #output_file.write(f"Generation of {n_iter} tokens took {token_gen_duration:.4f} seconds")
         for token in tokens:
             output_file.write(f"{token}\n") 
 
-def bpe (vocab: list, corpus_representation: dict, n_iter: int):
+def bpe (vocab: list, corpus_representation: dict, n_iter: int, corpus_segment: str):
     start = time.time()
     for current_iter in range(n_iter):
 
@@ -67,12 +67,13 @@ def bpe (vocab: list, corpus_representation: dict, n_iter: int):
         if (current_iter+1) >= 1000 and (current_iter+1) % 200 == 0:
             end = time.time()
             elapsed = end - start
-            write_tokens(vocab, current_iter+1, elapsed)
+            write_tokens(vocab, current_iter+1, corpus_segment, elapsed)
     
     return vocab
 
 
-with open("Corpus/Shakespeare_clean_train.txt", "r") as input_file:
+CORPUS_SEGMENT = "valid"
+with open(f"Corpus/Shakespeare_clean_{CORPUS_SEGMENT}.txt", "r") as input_file:
     raw_text = input_file.read()
 
 
@@ -86,7 +87,7 @@ tokenized_word_type_frequencies = get_charred_word_type_corpus_representation(ra
 
 
 start = time.time()
-print(bpe(vocabulary, tokenized_word_type_frequencies, 2000))
+print(bpe(vocabulary, tokenized_word_type_frequencies, 2000, CORPUS_SEGMENT))
 end = time.time()
 elapsed = end - start
 print(f"Elapsed time: {elapsed:.4f} seconds")
