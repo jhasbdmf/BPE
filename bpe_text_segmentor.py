@@ -1,5 +1,18 @@
-import re
-from utilities import tokenize_naively, get_string_chars
+from utilities import tokenize_naively, get_string_chars, read_file_from
+import os
+
+def write_tokenized_corpus_segment (corpus_chunk_name: str, segmented_corpus_chunk: list):
+    file_path = f"Tokenized_corpus/Tokenized_{corpus_chunk_name}_set.txt"
+    try:
+        with open(file_path, "w") as output_file:
+            for token in segmented_corpus:
+                output_file.write(f"{token}\n")
+    except FileNotFoundError:
+        parent_direcory = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
+        alternative_file_path = os.path.join(parent_direcory, file_path)
+        with open(alternative_file_path, "w") as output_file:
+            for token in segmented_corpus_chunk:
+                output_file.write(f"{token}\n")
 
 
 def get_word_type_counts_with_positions_in_a_corpus (corpus: str):
@@ -22,6 +35,7 @@ def get_word_type_counts_with_positions_in_a_corpus (corpus: str):
         else:
             corpus_representation[word_token_chars].append(word_token_index)
     return corpus_representation, len(corpus_tokens)
+
 
 
 def merge_corpus_chars (corpus_representation: dict, vocab: list):
@@ -59,32 +73,19 @@ def reconstruct_corpus_from (corpus_representation: dict, n_words_in_corpus: int
     #return reconstructed_corpus
     return [x for tup in reconstructed_corpus for x in tup]
 
-def tokenize_sequence(corpus: str):
+def tokenize_sequence(corpus: str, vocabulary: list):
     charred_word_types_with_frequencies_and_positions, number_of_words_in_a_corpus = get_word_type_counts_with_positions_in_a_corpus (corpus)
     corpus_tokens_compressed = merge_corpus_chars(charred_word_types_with_frequencies_and_positions, vocabulary)
     reconstructed_corpus = reconstruct_corpus_from(corpus_tokens_compressed, number_of_words_in_a_corpus)
     return reconstructed_corpus
 
-#read vocab from a .txt file
-
-with open("Generated_tokens/bpe_tokens with k = 2000.txt", "r") as vocabulary_file:
-    vocabulary = vocabulary_file.read()
-
-#remove empty string from end of vocab should it have been read into it
-vocabulary = vocabulary.split("\n")
-if vocabulary[len(vocabulary)-1] == "":
-    vocabulary.pop()
-
-CORPUS_SEGMENT = "train"
-with open(f"Corpus/Shakespeare_clean_{CORPUS_SEGMENT}.txt", "r") as input_file:
-    corpus = input_file.read()
 
 
-corpus = tokenize_sequence (corpus)
-
-with open(f"Tokenized {CORPUS_SEGMENT} set.txt", "w") as output_file:
-    for token in corpus:
-        output_file.write(f"{token}\n")
+CORPUS_SEGMENT = "test"
+raw_corpus = read_file_from(CORPUS_SEGMENT, "corpus")
+vocabulary = read_file_from("train", "Learned_vocabularies")
 
 
+segmented_corpus = tokenize_sequence (raw_corpus, vocabulary)
+write_tokenized_corpus_segment (CORPUS_SEGMENT, segmented_corpus)
 

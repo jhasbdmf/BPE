@@ -1,7 +1,7 @@
 from collections import Counter
 import math
-from text_segmentor import tokenize_sequence
-
+from bpe_text_segmentor import tokenize_sequence
+from utilities import read_file_from
 
 
 #llm rewrote my method which generated n_grams with a nested loop
@@ -65,7 +65,10 @@ def get_rightmost_index_of_in (n_gram_prefix: tuple, n_gram_list: list):
     return result
 
 
-def get_next_most_probable_token_after_via_backoff(sequence: list, sorted_n_grams: list, n_gram_counts: list):
+def get_next_most_probable_token_after_via_backoff(sequence: list, 
+                                                   sorted_n_grams: list, 
+                                                   n_gram_counts: list
+                                                ):
 
     next_token_found = False
     for i in range(0, len(sorted_n_grams)):
@@ -114,13 +117,7 @@ def get_perplexity_score_of_via(corpus_segment: str,
                                 backoff_discounter: float = 0.75
                             ):
 
-    with open(f"Tokenized {corpus_segment} set.txt", "r") as tokenized_corpus_file:
-        corpus_tokens = tokenized_corpus_file.read()
-
-    corpus_tokens = corpus_tokens.split("\n")
-    if corpus_tokens[len(corpus_tokens)-1] == "":
-        corpus_tokens.pop()
-
+    corpus_tokens = read_file_from (corpus_segment, "tokenized_corpus")
     total_number_of_unigrams = sum(n_gram_counts[-1].values())
     net_log_P = 0
 
@@ -159,15 +156,10 @@ def get_perplexity_score_of_via(corpus_segment: str,
     return perplexity
 
 
-with open("Tokenized train set.txt", "r") as tokenized_corpus_file:
-    corpus_tokens = tokenized_corpus_file.read()
 
-#remove empty string from end of vocab should it have been read into it
-corpus_tokens = corpus_tokens.split("\n")
-if corpus_tokens[len(corpus_tokens)-1] == "":
-    corpus_tokens.pop()
+corpus_tokens = read_file_from("train", "tokenized_corpus")
 
-MAX_N_GRAM_LENGTH = 6
+MAX_N_GRAM_LENGTH = 10
 
 counts_of_n_grams, sorted_n_grams = [], []
 for i in range (MAX_N_GRAM_LENGTH, 0, -1):
@@ -175,11 +167,11 @@ for i in range (MAX_N_GRAM_LENGTH, 0, -1):
     counts_of_n_grams.append(counts_of_i_grams)
     sorted_n_grams.append(sorted_i_grams)
 
-
+evaluation_set = "test"
 for i in range(1, MAX_N_GRAM_LENGTH + 1):
  
-    perplexity = get_perplexity_score_of_via ("valid", counts_of_n_grams[-i:], i)
-    print (f"For n = {i} perplexity is equal to {perplexity}")
+    perplexity = get_perplexity_score_of_via (evaluation_set, counts_of_n_grams[-i:], i)
+    print (f"For n = {i} perplexity on {evaluation_set} set is equal to {perplexity}")
 
 #go_into_generation_mode ()
 

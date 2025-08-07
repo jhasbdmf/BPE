@@ -7,10 +7,12 @@ def write_tokens(tokens: list, n_iter: int, corpus_segment: str, token_gen_durat
 
     # 1) figure out parent directory
     cwd       = os.getcwd()
-    parent    = os.path.abspath(os.path.join(cwd, os.pardir))
+    #parent    = os.path.abspath(os.path.join(cwd, os.pardir))
 
     # 2) build (and create) your output folder under the parent
-    out_dir   = os.path.join(parent, "Learned_vocabularies")
+    #out_dir   = os.path.join(parent, "Learned_vocabularies")
+
+    out_dir = os.path.join(cwd, "Learned_vocabularies")
     os.makedirs(out_dir, exist_ok=True)
 
     # 3) build your file name and full path
