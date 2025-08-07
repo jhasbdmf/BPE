@@ -118,31 +118,17 @@ def tokenize_sequence(corpus: str, vocabulary: list):
     reconstructed_corpus = reconstruct_corpus_from(corpus_tokens_compressed, number_of_words_in_a_corpus)
     return reconstructed_corpus
 
-#read vocab from a .txt file
 
-#with open("Generated_tokens/bpe_tokens with k = 2000.txt", "r") as vocabulary_file:
-    #vocabulary = vocabulary_file.read()
-
-#remove empty string from end of vocab should it have been read into it
-#vocabulary = vocabulary.split("\n")
-#if vocabulary[len(vocabulary)-1] == "":
-#    vocabulary.pop()
 
 CORPUS_SEGMENT = "valid"
 vocabulary = read_vocabulary()
-#print (vocabulary)
-#print (len(vocabulary))
+
 
 raw_corpus = read_raw_corpus(CORPUS_SEGMENT)
-#with open(f"Corpus/Shakespeare_clean_{CORPUS_SEGMENT}.txt", "r") as input_file:
-#    raw_corpus = input_file.read()
+
 
 
 segmented_corpus = tokenize_sequence (raw_corpus, vocabulary)
-
-#with open(f"Tokenized {CORPUS_SEGMENT} set.txt", "w") as output_file:
-#    for token in segmented_corpus:
-#        output_file.write(f"{token}\n")
 
 write_tokenized_corpus_segment (CORPUS_SEGMENT, segmented_corpus)
 
