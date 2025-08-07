@@ -1,26 +1,7 @@
 from collections import Counter
 import math
 from bpe_text_segmentor import tokenize_sequence
-import os
-
-def read_corpus_segment (corpus_segment: str):
-
-    file_path = f"Tokenized_corpus/tokenized {corpus_segment} set.txt"
-    try:
-        with open(file_path, "r") as input_file:
-            tokenized_corpus_segment_text = input_file.read()
-    except FileNotFoundError:
-        parent_direcory = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
-        alternative_file_path = os.path.join(parent_direcory, file_path)
-        with open(alternative_file_path, "r") as input_file:
-            tokenized_corpus_segment_text = input_file.read()
-
-    tokenized_corpus_segment = tokenized_corpus_segment_text.split("\n")
-    if tokenized_corpus_segment[-1] == "":
-        tokenized_corpus_segment.pop()
-   
-    return tokenized_corpus_segment
-
+from utilities import read_file_from
 
 
 #llm rewrote my method which generated n_grams with a nested loop
@@ -136,7 +117,7 @@ def get_perplexity_score_of_via(corpus_segment: str,
                                 backoff_discounter: float = 0.75
                             ):
 
-    corpus_tokens = read_corpus_segment (corpus_segment)
+    corpus_tokens = read_file_from (corpus_segment, "tokenized_corpus")
     total_number_of_unigrams = sum(n_gram_counts[-1].values())
     net_log_P = 0
 
@@ -175,9 +156,10 @@ def get_perplexity_score_of_via(corpus_segment: str,
     return perplexity
 
 
-corpus_tokens = read_corpus_segment ("train")
 
-MAX_N_GRAM_LENGTH = 20
+corpus_tokens = read_file_from("train", "tokenized_corpus")
+
+MAX_N_GRAM_LENGTH = 10
 
 counts_of_n_grams, sorted_n_grams = [], []
 for i in range (MAX_N_GRAM_LENGTH, 0, -1):

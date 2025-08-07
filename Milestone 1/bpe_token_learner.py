@@ -1,21 +1,7 @@
 from collections import Counter
 import time
-from utilities import get_charred_word_type_corpus_representation, get_string_chars
+from utilities import get_charred_word_type_corpus_representation, get_string_chars, read_file_from
 import os
-
-def read_corpus_text (corpus_segment: str):
-
-    file_path = f"Corpus/Shakespeare_clean_{corpus_segment}.txt"
-    try:
-        with open(file_path, "r") as input_file:
-            corpus_segment_text = input_file.read()
-    except FileNotFoundError:
-        parent_direcory = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
-        alternative_file_path = os.path.join(parent_direcory, file_path)
-        with open(alternative_file_path, "r") as input_file:
-            corpus_segment_text = input_file.read()
-
-    return corpus_segment_text
 
 def write_tokens(tokens: list, n_iter: int, corpus_segment: str, token_gen_duration: float):
 
@@ -102,10 +88,9 @@ def bpe (vocab: list, corpus_representation: dict, n_iter: int, corpus_segment: 
 
 CORPUS_SEGMENT = "train"
 
-raw_text = read_corpus_text(CORPUS_SEGMENT)
 
-#with open(f"Corpus/Shakespeare_clean_{CORPUS_SEGMENT}.txt", "r") as input_file:
-#    raw_text = input_file.read()
+raw_text = read_file_from(CORPUS_SEGMENT, "corpus")
+
 
 
 

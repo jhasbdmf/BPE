@@ -1,43 +1,9 @@
 import re
-from utilities import tokenize_naively, get_string_chars
+from utilities import tokenize_naively, get_string_chars, read_file_from
 import os
 
-def read_vocabulary (corpus_segment: str = "train",
-                    k:int = 2000
-                    ):
-
-    file_path = f"Learned_vocabularies/bpe_vocabulary_of_{corpus_segment}_set_with_k_{k}.txt"
-    try:
-        with open(file_path, "r") as input_file:
-            vocab_text = input_file.read()
-    except FileNotFoundError:
-        parent_direcory = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
-        alternative_file_path = os.path.join(parent_direcory, file_path)
-        with open(alternative_file_path, "r") as input_file:
-            vocab_text = input_file.read()
-
-    vocab = vocab_text.split("\n")
-    if vocab[-1] == "":
-        vocab.pop()
-   
-    return vocab
-
-def read_raw_corpus (corpus_segment: str):
-    
-    file_path = f"Corpus/Shakespeare_clean_{corpus_segment}.txt"
-
-    try:
-        with open(file_path , "r") as input_file:
-            raw_corpus = input_file.read()
-    except FileNotFoundError:
-        parent_direcory = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
-        alternative_file_path = os.path.join(parent_direcory, file_path)
-        with open(alternative_file_path, "r") as input_file:
-            raw_corpus = input_file.read()
-    return raw_corpus
-
 def write_tokenized_corpus_segment (corpus_chunk_name: str, segmented_corpus_chunk: list):
-    file_path = f"Tokenized_corpus/Tokenized {corpus_chunk_name} set.txt"
+    file_path = f"Tokenized_corpus/Tokenized_{corpus_chunk_name}_set.txt"
     try:
         with open(file_path, "w") as output_file:
             for token in segmented_corpus:
@@ -48,10 +14,6 @@ def write_tokenized_corpus_segment (corpus_chunk_name: str, segmented_corpus_chu
         with open(alternative_file_path, "w") as output_file:
             for token in segmented_corpus_chunk:
                 output_file.write(f"{token}\n")
-
-
-
-
 
 
 def get_word_type_counts_with_positions_in_a_corpus (corpus: str):
@@ -120,15 +82,11 @@ def tokenize_sequence(corpus: str, vocabulary: list):
 
 
 
-CORPUS_SEGMENT = "valid"
-vocabulary = read_vocabulary()
-
-
-raw_corpus = read_raw_corpus(CORPUS_SEGMENT)
-
+CORPUS_SEGMENT = "test"
+raw_corpus = read_file_from(CORPUS_SEGMENT, "corpus")
+vocabulary = read_file_from("train", "Learned_vocabularies")
 
 
 segmented_corpus = tokenize_sequence (raw_corpus, vocabulary)
-
 write_tokenized_corpus_segment (CORPUS_SEGMENT, segmented_corpus)
 

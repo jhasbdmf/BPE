@@ -1,5 +1,34 @@
 import re
 from collections import Counter
+import os
+
+def read_file_from (corpus_segment: str, file_subfolder: str, k: int = 2000):
+
+    if file_subfolder.lower() == "corpus": 
+        file_path = f"Corpus/Shakespeare_clean_{corpus_segment}.txt"
+    elif file_subfolder.lower() == "learned_vocabularies":
+        file_path = f"Learned_vocabularies/bpe_vocabulary_of_{corpus_segment}_set_with_k_{k}.txt"
+    else:
+        file_path = f"Tokenized_corpus/tokenized_{corpus_segment}_set.txt"
+    
+    try:
+        with open(file_path , "r") as input_file:
+            raw_text = input_file.read()
+    except FileNotFoundError:
+        parent_direcory = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
+        alternative_file_path = os.path.join(parent_direcory, file_path)
+        with open(alternative_file_path, "r") as input_file:
+            raw_text = input_file.read()
+
+    if file_subfolder.lower() == "corpus": 
+        return raw_text
+    else:
+        tokenized_text = raw_text.split("\n")
+        if tokenized_text[-1] == "":
+            tokenized_text.pop()
+    
+        return tokenized_text
+   
 
 def get_charred_word_type_corpus_representation (corpus: str):
 
