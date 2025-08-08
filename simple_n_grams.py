@@ -156,8 +156,9 @@ def get_perplexity_score_of_via(corpus_segment: str,
     return perplexity
 
 
+K = 2000
 
-corpus_tokens = read_file_from("train", "tokenized_corpus")
+corpus_tokens = read_file_from("train", "tokenized_corpus", K)
 
 MAX_N_GRAM_LENGTH = 10
 

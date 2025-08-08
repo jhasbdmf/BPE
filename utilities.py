@@ -9,7 +9,7 @@ def read_file_from (corpus_segment: str, file_subfolder: str, k: int = 2000):
     elif file_subfolder.lower() == "learned_vocabularies":
         file_path = f"Learned_vocabularies/bpe_vocabulary_of_{corpus_segment}_set_with_k_{k}.txt"
     else:
-        file_path = f"Tokenized_corpus/tokenized_{corpus_segment}_set.txt"
+        file_path = f"Tokenized_corpus/tokenized_{corpus_segment}_set_with_k_{k}.txt"
     
     try:
         with open(file_path , "r") as input_file:

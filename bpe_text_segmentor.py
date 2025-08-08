@@ -1,8 +1,8 @@
 from utilities import tokenize_naively, get_string_chars, read_file_from
 import os
 
-def write_tokenized_corpus_segment (corpus_chunk_name: str, segmented_corpus_chunk: list):
-    file_path = f"Tokenized_corpus/Tokenized_{corpus_chunk_name}_set.txt"
+def write_tokenized_corpus_segment (corpus_chunk_name: str, segmented_corpus_chunk: list, k: int):
+    file_path = f"Tokenized_corpus/Tokenized_{corpus_chunk_name}_set_with_k_{k}.txt"
     try:
         with open(file_path, "w") as output_file:
             for token in segmented_corpus:
@@ -80,12 +80,12 @@ def tokenize_sequence(corpus: str, vocabulary: list):
     return reconstructed_corpus
 
 
-
-CORPUS_SEGMENT = "test"
+K = 2000
+CORPUS_SEGMENT = "train"
 raw_corpus = read_file_from(CORPUS_SEGMENT, "corpus")
-vocabulary = read_file_from("train", "Learned_vocabularies")
+vocabulary = read_file_from("train", "Learned_vocabularies", K)
 
 
 segmented_corpus = tokenize_sequence (raw_corpus, vocabulary)
-write_tokenized_corpus_segment (CORPUS_SEGMENT, segmented_corpus)
+write_tokenized_corpus_segment (CORPUS_SEGMENT, segmented_corpus, K)
 

@@ -80,7 +80,7 @@ def bpe (vocab: list, corpus_representation: dict, n_iter: int, corpus_segment: 
             new_corpus_representation[tuple(new_word_type)] = word_type_frequency 
      
         corpus_representation = new_corpus_representation
-        if (current_iter+1) >= 1000 and (current_iter+1) % 200 == 0:
+        if (current_iter+1) >= 400 and (current_iter+1) % 200 == 0:
             end = time.time()
             elapsed = end - start
             write_tokens(vocab, current_iter+1, corpus_segment, elapsed)
