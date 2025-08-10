@@ -28,7 +28,7 @@ class Neural_n_gram_model:
         rng = np.random.default_rng(seed=42)  
         np_table = rng.normal(
             loc=0.0,          # mean
-            scale=0.4,        # standard deviation
+            scale=0.1,        # standard deviation
             size=(vocabulary_size, vocabulary_size)
         ).astype(np.float32)
         #np_table = 0,3 * rng.standard_normal((vocabulary_size, vocabulary_size)).astype(np.float32)
@@ -53,7 +53,7 @@ class Neural_n_gram_model:
         #if the model is in the inference mode
         #just return the logits since
         #argumentum maximi of those is sufficient
-        #to determine the next likelies token 
+        #to determine the next likeliest token 
         if target_index is None:  
             return logits
         
@@ -62,20 +62,26 @@ class Neural_n_gram_model:
         #to accelerate gradient descent
         else:
             CEL_gradient = self._get_normalized_logits(logits)
+            true_class_probability = CEL_gradient[target_index] 
+            CEL_value = -np.log(true_class_probability)
             CEL_gradient[target_index] -= 1
-            return CEL_gradient
+            return CEL_value, CEL_gradient
 
    
     
-    def generate_new_tokens(self, token_sequence: list, n_tokens: int, k_for_top_k:int = 5):
+    def generate_new_tokens(self, token_sequence: list, n_tokens: int, k_for_top_k:int = 4):
         for _ in range (n_tokens):
             last_token_index = token_sequence[-1]
           
             #next_token_index = np.argmax(self.token_embedding_table[last_token_index])
          
+            #get the list of k likeliest next tokens
             topk = np.argpartition(self.token_embedding_table[last_token_index], -k_for_top_k)[-k_for_top_k:]
+
+            #sample one token from k likeliest ones uniformly
             random_index = np.random.randint(0, k_for_top_k)  
             next_token_index = topk[random_index]
+
             token_sequence.append(next_token_index)
         return token_sequence
 
@@ -100,8 +106,8 @@ neural_n_gram_model = Neural_n_gram_model(vocabulary_size)
 
 
 
-LEARNING_RATE = 0.01
-LEARNING_RATE_DECAY_PER_EPOCH = 0.95
+LEARNING_RATE = 0.4
+LEARNING_RATE_MULTIPLIER_PER_EPOCH = 0.95
 N_EPOCHS = 50
 
 
@@ -109,7 +115,7 @@ N_EPOCHS = 50
 
 print (f"BPE k = {K}")
 print (f"learning rate = {LEARNING_RATE}")
-print (f"learning rate decay per epoch = {LEARNING_RATE_DECAY_PER_EPOCH}")
+print (f"learning rate decay per epoch = {LEARNING_RATE_MULTIPLIER_PER_EPOCH}")
 print (f"n_epochs = {N_EPOCHS}")
 print ("_" * 50)
 
@@ -118,14 +124,19 @@ for epoch_index in range(1, N_EPOCHS + 1):
 
     print (f"current epoch number is {epoch_index}")
     print (f"current learning rate = {LEARNING_RATE}")
+    total_loss = 0
     for x,y in zip(preceding_tokens, subsequent_tokens):
         #get the CEL gradient from the forward pass directly
-        gradient = neural_n_gram_model.forward(x, y)
+        loss, loss_gradient = neural_n_gram_model.forward(x, y)
         #do gradient step immediately
-        neural_n_gram_model.token_embedding_table[x] -= LEARNING_RATE*gradient
+        neural_n_gram_model.token_embedding_table[x] -= LEARNING_RATE*loss_gradient
+        total_loss += loss
     
-    LEARNING_RATE *= LEARNING_RATE_DECAY_PER_EPOCH
-    
+    LEARNING_RATE *= LEARNING_RATE_MULTIPLIER_PER_EPOCH
+
+    total_loss /= len(preceding_tokens)
+    print (f"average loss in epoch {epoch_index} is {total_loss}")
+
     input_sequence = [78]
     input_sequence = neural_n_gram_model.generate_new_tokens(input_sequence, 50)
     decoded_input_sequence = token_translator.decode_list(input_sequence)
