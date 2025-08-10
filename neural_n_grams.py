@@ -1,6 +1,5 @@
 from utilities import read_file_from
 import numpy as np
-from numpy.random import default_rng
 import random
 
 class Token_Translator:
@@ -95,8 +94,77 @@ class Neural_n_gram_model:
         return token_sequence
 
 
+def train_model_with (model: Neural_n_gram_model, 
+                         optimizer: str, 
+                         lr: int, 
+                         n_epochs: int, 
+                         rho: float = 0.9,
+                         sgd_lr_multiplier: float = 0.95
+                        ):
+    token_pairs = list(zip(preceding_tokens, subsequent_tokens))
+    loss_history = []
+
+    if optimizer.lower() == "rmsprop":
+        RMSprop_running_square_gradient_avg = np.zeros_like(neural_n_gram_model_RMSprop.token_embedding_table)
+
+    for epoch_index in range(1, n_epochs + 1):
+
+        print (f"Epoch {epoch_index}/{n_epochs}")
+
+        
+        if optimizer.lower() == "rmsprop": 
+            total_RMS_prop_lr = 0.0
+        else:
+            print (f"current SGD learning rate = {lr}")
+
+        
+        total_loss = 0
+       
+        
+        #random.shuffle(token_pairs) 
+      
+        for x,y in token_pairs:
+
+            #get the CEL gradient from the forward pass directly
+            loss, loss_gradient = model.forward(x, y)
+            
 
 
+            #compute running gradient avg for RMSprop
+            #and do gradient descent step 
+            if optimizer.lower() == "rmsprop":  
+                RMSprop_running_square_gradient_avg[x] *=  rho
+                RMSprop_running_square_gradient_avg[x] += (loss_gradient ** 2) * (1-rho)
+                RMSprop_denominator = np.sqrt(RMSprop_running_square_gradient_avg[x] + 0.1e-6)
+                current_lr = lr / RMSprop_denominator
+                total_RMS_prop_lr += current_lr.mean()
+                model.token_embedding_table[x] -=  current_lr * loss_gradient
+            else:
+
+            #just do gradient descent step for SGD
+                model.token_embedding_table[x] -= lr*loss_gradient
+
+        
+
+            total_loss += loss
+          
+        if optimizer.lower() == "rmsprop":
+            total_RMS_prop_lr /= len(preceding_tokens)
+            print (f"current avg RMSprop learning rate = {total_RMS_prop_lr}")
+        else:
+            lr *= sgd_lr_multiplier
+        
+        
+
+        total_loss /= len(preceding_tokens)
+        print (f"average loss is {total_loss}")
+        loss_history.append(total_loss)
+        print ("_" * 50)
+
+
+
+
+    return model, loss_history
 
 
 K = 2000
@@ -118,7 +186,7 @@ neural_n_gram_model_RMSprop = Neural_n_gram_model(vocabulary_size)
 SGD_LEARNING_RATE = 0.5
 RMS_PROP_INITIAL_LR = 0.3
 LEARNING_RATE_MULTIPLIER_PER_EPOCH = 0.95
-N_EPOCHS = 30
+N_EPOCHS = 15
 
 RMS_PROP_RHO = 0.9
 #RMS_PROP_EPSILON = 0.1e-7
@@ -131,70 +199,39 @@ print (f"n_epochs = {N_EPOCHS}")
 print ("_" * 50)
 
 
-loss_history_SGD = []
-loss_history_RMSprop = []
 
-RMSprop_running_square_gradient_avg = np.zeros_like(neural_n_gram_model_RMSprop.token_embedding_table)
+neural_n_gram_model_RMSprop, loss_history_RMSprop = train_model_with (neural_n_gram_model_RMSprop,
+                                                                      "RMSprop",
+                                                                      RMS_PROP_INITIAL_LR,
+                                                                      N_EPOCHS,
+                                                                      RMS_PROP_RHO
+                                                                      )
 
-for epoch_index in range(1, N_EPOCHS + 1):
 
-    print (f"Epoch {epoch_index}/{N_EPOCHS}")
-    print (f"current SGD learning rate = {SGD_LEARNING_RATE}")
 
+input_sequence_RMSprop = [78]
+input_sequence_RMSprop = neural_n_gram_model_RMSprop.generate_new_tokens(input_sequence_RMSprop, 200)
+decoded_input_sequence_RMSprop = token_translator.decode_list(input_sequence_RMSprop)
+print ("RMSprop text")
+print ("".join(decoded_input_sequence_RMSprop).replace("</w>", " "))
+print (loss_history_RMSprop)
+print ("_" * 50)
+
+neural_n_gram_model_SGD, loss_history_SGD = train_model_with (neural_n_gram_model_SGD,
+                                                                      "SGD",
+                                                                      SGD_LEARNING_RATE,
+                                                                      N_EPOCHS,
+                                                                      0.9,
+                                                                      LEARNING_RATE_MULTIPLIER_PER_EPOCH
+                                                                      )
     
-   
-    total_RMS_prop_lr = 0.0
-    total_loss_SGD = 0
-    total_loss_RMSprop = 0
-    
-
-    token_pairs = list(zip(preceding_tokens, subsequent_tokens))
-    random.shuffle(token_pairs) 
-    #for x,y in zip(preceding_tokens, subsequent_tokens):
-    for x,y in token_pairs:
-
-        #get the CEL gradient from the forward pass directly
-        loss_SGD, loss_gradient_SGD = neural_n_gram_model_SGD.forward(x, y)
-        loss_RMSprop, loss_gradient_RMSprop = neural_n_gram_model_RMSprop.forward(x, y)
 
 
-        #compute running gradient avg for RMSprop
-        RMSprop_running_square_gradient_avg[x] *=  RMS_PROP_RHO
-        RMSprop_running_square_gradient_avg[x] += (loss_gradient_RMSprop ** 2) * (1-RMS_PROP_RHO)
-
-        #do gradient step immediately
-        neural_n_gram_model_SGD.token_embedding_table[x] -= SGD_LEARNING_RATE*loss_gradient_SGD
-
-        RMSprop_denominator = np.sqrt(RMSprop_running_square_gradient_avg[x] + 0.1e-6)
-        RMSprop_lr = RMS_PROP_INITIAL_LR / RMSprop_denominator
-        total_RMS_prop_lr += RMSprop_lr.mean()
-        neural_n_gram_model_RMSprop.token_embedding_table[x] -=  RMSprop_lr * loss_gradient_RMSprop
-
-        total_loss_SGD += loss_SGD
-        total_loss_RMSprop += loss_RMSprop
-    
-    SGD_LEARNING_RATE *= LEARNING_RATE_MULTIPLIER_PER_EPOCH
-    total_RMS_prop_lr /= len(preceding_tokens)
-    print (f"current avg RMSprop learning rate = {total_RMS_prop_lr}")
-
-    total_loss_SGD /= len(preceding_tokens)
-    print (f"average SGD loss in epoch {epoch_index} is {total_loss_SGD}")
-
-    total_loss_RMSprop /= len(preceding_tokens)
-    print (f"average RMSprop loss in epoch {epoch_index} is {total_loss_RMSprop}")
-    print ("_" * 50)
 
 input_sequence_SGD = [78]
 input_sequence_SGD = neural_n_gram_model_SGD.generate_new_tokens(input_sequence_SGD, 200)
 decoded_input_sequence_SGD = token_translator.decode_list(input_sequence_SGD)
 print ("SGD text")
 print ("".join(decoded_input_sequence_SGD).replace("</w>", " "))
+print (loss_history_SGD)
 print ("_" * 50)
-
-input_sequence_RMSprop = [78]
-input_sequence_RMSprop = neural_n_gram_model_SGD.generate_new_tokens(input_sequence_RMSprop, 200)
-decoded_input_sequence_RMSprop = token_translator.decode_list(input_sequence_RMSprop)
-print ("SGD text")
-print ("".join(decoded_input_sequence_RMSprop).replace("</w>", " "))
-print ("_" * 50)
-    
