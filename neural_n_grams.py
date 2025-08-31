@@ -1,6 +1,8 @@
-from utilities import read_file_from
+from utilities import read_file_from, log_message
 import numpy as np
 import random
+import copy
+import matplotlib.pyplot as plt
 
 class Token_Translator:
     def __init__(self, vocab: list):
@@ -113,6 +115,8 @@ def train_model_with (model: Neural_n_gram_model,
     train_loss_history = []
     val_loss_history = []
 
+    best_avg_epoch_loss = 1000
+
     if optimizer.lower() == "rmsprop":
         RMSprop_running_square_gradient_avg = np.zeros_like(neural_n_gram_model_RMSprop.token_embedding_table)
 
@@ -177,12 +181,49 @@ def train_model_with (model: Neural_n_gram_model,
         #log_message (f"average val loss = {avg_val_loss:.5f}")
         val_loss_history.append(avg_val_loss)
 
+        if avg_val_loss < best_avg_epoch_loss:
+            best_avg_epoch_loss = avg_val_loss
+            best_model = copy.deepcopy(model)
+
         print ("_" * 50)
 
+    if best_model is not None:
+        return best_model, train_loss_history, val_loss_history
+    else:
+        return model, train_loss_history, val_loss_history
+    #return model, train_loss_history, val_loss_history
 
 
+def plot_perplexity (train_perplexity_scores1: list, 
+                     val_perplexity_scores1: list, 
+                     train_perplexity_scores2: list, 
+                     val_perplexity_scores2: list, 
+                     ):
+    # Indices
+    #indices1 = range(len(perplexity_scores_K_2000))  
+    indices1 = np.arange(len(train_perplexity_scores1)) + 1
+    indices2 = np.arange(len(val_perplexity_scores1)) + 1
+    indices3 = np.arange(len(train_perplexity_scores2)) + 1
+    indices4 = np.arange(len(val_perplexity_scores2)) + 1
 
-    return model, train_loss_history, val_loss_history
+
+    #indices2 = range(len(val_loss_history)) 
+
+    # Plot both
+    plt.plot(indices1, train_perplexity_scores1, marker='o', linestyle='-', label=f'Train perplexity RMSprop')
+    plt.plot(indices2, val_perplexity_scores1, marker='s', linestyle='--', label=f'Val perplexity RMSprop')
+    plt.plot(indices3, train_perplexity_scores2, marker='^', linestyle='-', label=f'Train perplexity SGD')
+    plt.plot(indices4, val_perplexity_scores2, marker='p', linestyle='--', label=f'Val perplexity SGD')
+  
+    plt.xlabel('Epochs')
+    plt.ylabel('Average perplexity')
+    plt.title(f'Perplexity scores of neural bigrams')
+    plt.legend()
+    plt.grid(True)
+
+    plt.savefig(f"Perplexity_scores_of_neural_bigrams.png", dpi=300, bbox_inches='tight')
+
+    plt.show()
 
 
 K = 400
@@ -227,7 +268,7 @@ neural_n_gram_model_RMSprop = Neural_n_gram_model(vocabulary_size)
 SGD_LEARNING_RATE = 0.5
 RMS_PROP_INITIAL_LR = 0.3
 LEARNING_RATE_MULTIPLIER_PER_EPOCH = 0.95
-N_EPOCHS = 3
+N_EPOCHS = 15
 
 RMS_PROP_RHO = 0.9
 #RMS_PROP_EPSILON = 0.1e-7
@@ -251,14 +292,16 @@ neural_n_gram_model_RMSprop, train_loss_history_RMSprop, val_loss_history_RMSpro
                                                                       )
 
 
-#print ("ASKJDHA", evaluate_model_on(neural_n_gram_model_RMSprop, val_set_400))
+print ("ASKJDHA", evaluate_model_on(neural_n_gram_model_RMSprop, val_set_400))
 
 input_sequence_RMSprop = [78]
 input_sequence_RMSprop = neural_n_gram_model_RMSprop.generate_new_tokens(input_sequence_RMSprop, 200)
 decoded_input_sequence_RMSprop = token_translator.decode_list(input_sequence_RMSprop)
 print ("RMSprop text")
-print ("".join(decoded_input_sequence_RMSprop).replace("</w>", " "))
-print (train_loss_history_RMSprop)
+RMS_text = "".join(decoded_input_sequence_RMSprop).replace("</w>", " ")
+print (RMS_text)
+print ("CEL", train_loss_history_RMSprop)
+print ("PERP", np.exp(train_loss_history_RMSprop))
 print ("_" * 50)
 
 
@@ -280,6 +323,23 @@ input_sequence_SGD = [78]
 input_sequence_SGD = neural_n_gram_model_SGD.generate_new_tokens(input_sequence_SGD, 200)
 decoded_input_sequence_SGD = token_translator.decode_list(input_sequence_SGD)
 print ("SGD text")
-print ("".join(decoded_input_sequence_SGD).replace("</w>", " "))
+SGD_text = "".join(decoded_input_sequence_SGD).replace("</w>", " ")
+print (SGD_text)
 print (train_loss_history_SGD)
 print ("_" * 50)
+
+
+
+filename = "neural_bigram_test_set_perplexities.txt"
+RMS_test_perp = np.exp(evaluate_model_on (neural_n_gram_model_RMSprop, test_set_400))
+SGD_test_perp = np.exp(evaluate_model_on (neural_n_gram_model_SGD, test_set_400))
+print (f"RMS test score = {RMS_test_perp}")
+print (f"SGD test score = {SGD_test_perp}")
+log_message(f"RMS test score = {RMS_test_perp}", filename)
+log_message(f"RMS text = {RMS_text}", filename)
+log_message("_"*100, filename)
+log_message(f"SGD test score = {SGD_test_perp}", filename)
+log_message(f"SGD text = {SGD_text}", filename)
+log_message("_"*100, filename)
+
+plot_perplexity (np.exp(train_loss_history_RMSprop), np.exp(val_loss_history_RMSprop), np.exp(train_loss_history_SGD), np.exp(val_loss_history_SGD))
