@@ -30,7 +30,6 @@ def bpe (vocab: list, corpus_representation: dict, n_iter: int, corpus_segment: 
     start = time.time()
     for current_iter in range(n_iter):
 
- 
         inter_word_counter = {}
         for word_type, word_type_frequency in corpus_representation.items():
 

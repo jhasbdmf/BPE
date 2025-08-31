@@ -80,7 +80,7 @@ def tokenize_sequence(corpus: str, vocabulary: list):
     return reconstructed_corpus
 
 
-K = 2000
+K = 1200
 CORPUS_SEGMENT = "train"
 raw_corpus = read_file_from(CORPUS_SEGMENT, "corpus")
 vocabulary = read_file_from("train", "Learned_vocabularies", K)
@@ -88,4 +88,6 @@ vocabulary = read_file_from("train", "Learned_vocabularies", K)
 
 segmented_corpus = tokenize_sequence (raw_corpus, vocabulary)
 write_tokenized_corpus_segment (CORPUS_SEGMENT, segmented_corpus, K)
+
+print (f"{CORPUS_SEGMENT} set is segmented via vocab with k = {K}")
 
