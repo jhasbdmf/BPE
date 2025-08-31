@@ -119,19 +119,21 @@ def get_perplexity_score_of_via(corpus_segment: str,
          
             if sequence_freq > 0:
              
-          
-                
                 #we have not backed off to a unigram yet, because
                 #length (current n_gram without the last element) > 0 
                 if len (sequence[j:-1]) > 0:
                     perplexity_divisor = n_gram_counts[j+1][sequence[j:-1]]
-                    current_log_P = (sequence_freq - backoff_discounter) / perplexity_divisor 
+                    #current_log_P = (sequence_freq - backoff_discounter) / perplexity_divisor 
 
                 #we have backed off to a unigram when the
                 #length (current n_gram without the last element) = 0 
                 else:
                     perplexity_divisor = total_number_of_unigrams
-                    current_log_P = sequence_freq / perplexity_divisor 
+                    #current_log_P = sequence_freq / perplexity_divisor 
+                
+                penalized_perplexity_numerator = max(1e-5, sequence_freq - backoff_discounter*(j+1))
+                current_log_P = penalized_perplexity_numerator / perplexity_divisor 
+                #current_log_P = (sequence_freq - backoff_discounter) / perplexity_divisor 
          
                 net_log_P += math.log(current_log_P) 
 
