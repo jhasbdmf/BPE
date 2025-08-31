@@ -59,3 +59,7 @@ def tokenize_naively(corpus: str):
 
 def get_string_chars(string: str):
     return re.findall(r"[A-Za-z]", string)
+
+def log_message(message, filename):
+    with open(filename, "a") as f:
+        f.write(message + "\n")

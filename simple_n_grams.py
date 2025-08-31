@@ -1,7 +1,7 @@
 from collections import Counter
 import math
 from bpe_text_segmentor import tokenize_sequence
-from utilities import read_file_from
+from utilities import read_file_from, log_message
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -179,8 +179,17 @@ def go_into_generation_mode (k: int):
             next_token = get_next_most_probable_token_after_via_backoff(input_string_tail_tokens, sorted_n_grams, counts_of_n_grams)
             input_string_tokens.append(next_token)
         
-        print ("Generated sequence now is: ", "".join(input_string_tokens).replace("</w>"," "))
+        gen_sequence = "".join(input_string_tokens).replace("</w>"," ")
+
+        print ("Generated sequence now is: ", gen_sequence)
+
+        filename = "simple_n_gram_gen_text.txt"
+        log_message(f"vocab size k = {k}, generated sequence is:\n{gen_sequence}", filename)
+        log_message("_" * 100, filename)
+
         break
+    
+
     
 MAX_N_GRAM_LENGTH = 10
 
@@ -198,7 +207,7 @@ for i in range(1, MAX_N_GRAM_LENGTH + 1):
     perplexity = get_perplexity_score_of_via (evaluation_set, counts_of_n_grams[-i:], i, K)
     perplexity_scores_K_400.append(perplexity)
     print (f"For vocab size k = {K} and n = {i} perplexity on {evaluation_set} set is equal to {perplexity}")
-
+go_into_generation_mode (K)
 
 
 K = 2000
@@ -215,9 +224,9 @@ for i in range(1, MAX_N_GRAM_LENGTH + 1):
     perplexity = get_perplexity_score_of_via (evaluation_set, counts_of_n_grams[-i:], i)
     perplexity_scores_K_2000.append(perplexity)
     print (f"For vocab size k = {K} and n = {i} perplexity on {evaluation_set} set is equal to {perplexity}")
-
+go_into_generation_mode (K)
 
 plot_perplexity (perplexity_scores_K_400, perplexity_scores_K_2000, 400, 2000)
 
 
-go_into_generation_mode (K)
+
