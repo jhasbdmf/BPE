@@ -79,7 +79,7 @@ class Neural_n_gram_model:
 
    
     
-    def generate_new_tokens(self, token_sequence: list, n_tokens: int, k_for_top_k:int = 4):
+    def generate_new_tokens(self, token_sequence: list, n_tokens: int, k_for_top_k:int = 3):
         for _ in range (n_tokens):
             last_token_index = token_sequence[-1]
           

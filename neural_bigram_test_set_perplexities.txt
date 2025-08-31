@@ -1,51 +1,3 @@
-RMS test score = 2.462352991104126
-RMS text = k able paris wer gred sorried i and the healed slain to just and than the orrueous pe can tella ay it my grace must with an dog night lady mony you agapaindbried sform me your act what ith indbin to fell that he then the which is wers are found and love s decountursorneever the ornew ourtunceed to just a ay ging men s what far all what icious murse before the ort what poish and far as now must be meturghturghter quever my grace or put amantime bin ventience of form d and love demeang tis trude thy hunceith and than to o hath not as cham
-RMS test score = 2.47544002532959
-RMS text = k him in quise a yong queing what is to my man thy quise wilort twed ay confopheld me assip exption so withings that your uncan you healora lies have culuse was a news of their chip extwed this kes king s had beface well i justill matough the ingly ages have a never thee speak with press and unhast man thy play inentreat do say the third cleopatra cleopatra cleopatra o a new shake in this bloody deliquither etunhatedisteat do tis not world youthose of your son and untalude one macy noble on earth how intty i just man san that i my son of your hours orenchur
-____________________________________________________________________________________________________
-SGD test score = 4.244848251342773
-SGD text = k you do you must i am not in a gedoubest of the c d the claunto me i am gething to the ft i will be a ss and so sange to me and the geen with a solia ss to me and the c d of the c i ll you are the ger of this is not be gep and so fair and i am not to be aday i have heard i ll me a ss to me to the charge to the charmia find the c a i have day i will be auludidoul that is it of the fear the clad of his best to be ded in the wate and so fair huse of his beat i will not to best thou arm and so much the ger s to be d
-____________________________________________________________________________________________________
-RMS test score = 37.11879348754883
-RMS text = k d boy horrestion that the ooon t not to i i i i am i have you have no such thereof their coming if you ged on therefore the rabrow him and brutus is ded on t night you gone to knew d boy agabench you have a tal mind of that straious fldom and brutus is youreseel it lot night you come himercutio my lord hamlet what s ano teous chietly that powing is yourantz of that poor in his malse but if thou art inking s and hold to sthoughocirough i thou shareseepent and hold a way the rably for your huciranton him that poinst me that staffall back i have a way 
-____________________________________________________________________________________________________
-SGD test score = 74.88040161132812
-SGD text = k and i am cleopatra what a man and i have a ss the banqueseek to be gread the claunto you are not a follow him he s county of all this houl i have a man in his old to bangread by your faits of all this hangrosengross the bras chard broappy and let the poor of the poss of my dness in this ckeek you are my light i must neits of him to broappear the blosoul and soulusindaway to be brow a man s chard i have been of him he s to brosengedner and let s of all his own the claermian honoul d by his oio and let 
-____________________________________________________________________________________________________
-RMS test score = 6.268129825592041
-RMS text = k eastrave and the welloveuck slel n and the scenrest thou meet as if on the scant how cauck man why man a if he was sted by other depart to the gent diver madander thout on t to see you eastroscant how honesigo yras away come the came hear a her eye shapleel n and depart comouse one ruewell metidier execut the caugnosettance of me and deparis goose you eastras ach paris the wellovel n eulla if on them proculesids and depart on t the groscant how me upon my time i hunt accepleechel shremeet part comn and juli
-____________________________________________________________________________________________________
-SGD test score = 67.67406463623047
-SGD text = k and bano er of your faitents of your face the coundear and the sins the charmian away to night and my face the clot and the clain the brought and i have no matter i will not so sween and bano and the sought i will not be afolife and bandaudisince i would you do you shall banger to you shall i have no fellow me the bangread to the sough the breat of the counds i would you have before be sough i will not so soul and my lord hamlet i have better in his olife to you have no no maday i would not in this is a dausough the worthy bread with his fair of his old man 
-____________________________________________________________________________________________________
-BPE k = 400
-n_epochs = 2
-____________________________________________________________________________________________________
-RMSpror initial learning rate = 0.3
-RMSprop rho = 0.9
-RMS test score = 16.95608139038086
-RMS text = k d could craveral bessayare yround i do not i do not from the gurn of hear that the reason to do i think you well i think so demonecravern of all conflow me in to yare but by the round to ches cassiid the round i should not i first could not i think so cassius for i think it his wall conta laing ears your lead craick d could not what s are yrunes cassity and night bbbessengurelenether to yself a man and that for the gth not nown i should i first guary froar and you o of that naker of any men s are betom i should not from this gurts with night s your lick of all that name but by my lord pare beless 
-___________________________________________________________________________
-SGD initial learning rate = 0.5
-SDG learning rate decay per epoch = 0.95
-SGD test score = 71.11161804199219
-SGD text = k d and the saludispepreturence to the greason and i am i am blt thou ard with you do you not a ms of his bangadome i will not a and abilt and i ll d and biland the gaway to bans that is the gready is a manquitch you have a ss of my father and bland blost thou clay the ss that sletter in the sannot so i will be a sleep and abans that is not clack of the gre i have i ll of a ss in my hearing in my lord i will be ded i ll of my turence i ll you have domitrish of a mangently in the gappollock to the s
-___________________________________________________________________________
-BPE k = 400
-n_epochs = 2
-____________________________________________________________________________________________________
-RMSpror initial learning rate = 0.3
-RMSprop rho = 0.9
-RMS test score = 16.5849552154541
-__________________________________________________
-RMS text = k and it mutoul is now i father s is this siwards gage thou do not a bmself as you are cleangumt ia lord is inhimneach when the words gar the bimights die the bbal changuest ghter dentle from hnarce an withal pe thou must not go and guited me to me milippy let me and some of men i seey son that at a sing une an withal shave good my reving i not go and gue us folons is now the words their bmself to me to coming i seen how like a bbal is ince what will fety that raindie the attwife to me mia exeth new will i seconveral bs thers of men s th
-___________________________________________________________________________
-SGD initial learning rate = 0.5
-SDG learning rate decay per epoch = 0.95
-SGD test score = 71.47084045410156
-__________________________________________________
-SGD text = k of this gentle sed of my claused and seat of my branted to be not sands but to me and i ll d and tor to the ster than to the clausea and the bls i do you not sea and sands but that i do not so much d in the ste i ll you shall not so approabones my lord what he claudispil of my lord prievery one that we will i have you not sed of the weace of his branton this ger d in a sown i ll me not so father and sed of my lord hamlet i have ding of the wo i ll me the bring the choly i ll d in this die i ll you have hearts of his olive me the ste the st
-___________________________________________________________________________
 BPE k = 400
 n_epochs = 15
 ____________________________________________________________________________________________________
@@ -60,4 +12,19 @@ SDG learning rate decay per epoch = 0.95
 SGD test score = 67.60160064697266
 __________________________________________________
 SGD text = k you shall not the watuse and that i will not so good night s and thin my hearing to you have before the worthy fair of the brown the wature of his charmight of the wold man to you have day the bil and therefore the bands to you are the broword and the bill the braw the brather to the day and in his father to be dends the wold and thannot so mutring the world of his faio er and the words and in the womil d and that he was my lord othello o er and the day me the wown to be ause and the wown i have you shall be daflday the damany of my dome to be dene and that you are you shall 
+___________________________________________________________________________
+BPE k = 400
+n_epochs = 15
+____________________________________________________________________________________________________
+RMSpror initial learning rate = 0.3
+RMSprop rho = 0.9
+RMS test score = 6.485101699829102
+__________________________________________________
+RMS text = k nerila night cassio as a night with hn fours can any les you were cassio as a jurn frage the very true on her ew horrought for ms and i ew i think on suit given to blooks and i think thou arteth i think what hath had mad is firmistress i think on her ew i think what should not wfuless lemight it an doth i ll not went so i ever canother havil to bartell not but not wears can any les you sir are lown he would do you sir will lia hour poet to speak of spirth i ever cassius o goguis firmistrankes you of prely exeunt science at the very true to nerate on marl mumbill not 
+___________________________________________________________________________
+SGD initial learning rate = 0.5
+SDG learning rate decay per epoch = 0.95
+SGD test score = 67.69792175292969
+__________________________________________________
+SGD text = k you are you are you know not be so father and thice and the word of the womil of the wresturn and i ll d of the braw of his father and the wrs and the wompeophell not a wressense the womildafothus enobern to be so less and thus enobercoiless of the bus endatio what is the wome and thus ene and thus and thus enobart and i have you are not a wome and i am i ll me the wrs the bus caesar s of this is the womil and thin my bus and i have betch d and i am soothiluse and i am sough d and i have you have dafoi
 ___________________________________________________________________________
