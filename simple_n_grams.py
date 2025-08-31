@@ -98,19 +98,6 @@ def get_next_most_probable_token_after_via_backoff(sequence: list,
 
     return next_token
 
-
-def go_into_generation_mode ():
-    while True:
-        input_string = input("Give me 3 words separated by single spaces to autocomplete: ")
-        input_string_tokens = tokenize_sequence(input_string)
-        
-        for _ in range(200):
-            input_string_tail_tokens = tuple(input_string_tokens[-(MAX_N_GRAM_LENGTH-1):])
-            next_token = get_next_most_probable_token_after_via_backoff(input_string_tail_tokens, sorted_n_grams, counts_of_n_grams)
-            input_string_tokens.append(next_token)
-        
-        print ("Generated sequence now is: ", "".join(input_string_tokens).replace("</w>"," "))
-
 def get_perplexity_score_of_via(corpus_segment: str, 
                                 n_gram_counts: list, 
                                 max_n_gram_len: int, 
@@ -155,6 +142,19 @@ def get_perplexity_score_of_via(corpus_segment: str,
  
     return perplexity
 
+def go_into_generation_mode (k: int):
+    vocabulary = read_file_from("train", "Learned_vocabularies", k)
+    while True:
+        input_string = input("Give me 3 words separated by single spaces to autocomplete: ")
+        #input_string_tokens = tokenize_sequence(input_string)
+        input_string_tokens = tokenize_sequence(input_string, vocabulary)
+        
+        for _ in range(200):
+            input_string_tail_tokens = tuple(input_string_tokens[-(MAX_N_GRAM_LENGTH-1):])
+            next_token = get_next_most_probable_token_after_via_backoff(input_string_tail_tokens, sorted_n_grams, counts_of_n_grams)
+            input_string_tokens.append(next_token)
+        
+        print ("Generated sequence now is: ", "".join(input_string_tokens).replace("</w>"," "))
 
 K = 2000
 
@@ -174,5 +174,5 @@ for i in range(1, MAX_N_GRAM_LENGTH + 1):
     perplexity = get_perplexity_score_of_via (evaluation_set, counts_of_n_grams[-i:], i)
     print (f"For n = {i} perplexity on {evaluation_set} set is equal to {perplexity}")
 
-#go_into_generation_mode ()
+go_into_generation_mode (K)
 
