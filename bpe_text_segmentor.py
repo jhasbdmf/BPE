@@ -13,6 +13,7 @@ def write_tokenized_corpus_segment (corpus_chunk_name: str, segmented_corpus_chu
         with open(alternative_file_path, "w") as output_file:
             for token in segmented_corpus_chunk:
                 output_file.write(f"{token}\n")
+    #print (f"{corpus_chunk_name} set is segmented via vocab with k = {k}")
 
 
 def get_word_type_counts_with_positions_in_a_corpus (corpus: str):
@@ -89,5 +90,5 @@ vocabulary = read_file_from("train", "Learned_vocabularies", K)
 segmented_corpus = tokenize_sequence (raw_corpus, vocabulary)
 write_tokenized_corpus_segment (CORPUS_SEGMENT, segmented_corpus, K)
 
-print (f"{CORPUS_SEGMENT} set is segmented via vocab with k = {K}")
+
 

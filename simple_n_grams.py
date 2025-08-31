@@ -144,21 +144,23 @@ def get_perplexity_score_of_via(corpus_segment: str,
  
     return perplexity
 
-def plot_perplexity (perplexity_scores1: list, perplexity_scores2: list, k1:int, k2: int):
+def plot_perplexity (perplexity_scores1: list, perplexity_scores2: list, perplexity_scores3: list, k1:int, k2: int, k3:int):
     # Indices
     #indices1 = range(len(perplexity_scores_K_2000))  
     indices1 = np.arange(len(perplexity_scores1)) + 1
     indices2 = np.arange(len(perplexity_scores2)) + 1
+    indices3 = np.arange(len(perplexity_scores3)) + 1
 
     #indices2 = range(len(val_loss_history)) 
 
     # Plot both
     plt.plot(indices1, perplexity_scores1, marker='o', linestyle='-', label=f'vocab size k = {k1}')
     plt.plot(indices2, perplexity_scores2, marker='s', linestyle='--', label=f'vocab size k = {k2}')
+    plt.plot(indices3, perplexity_scores3, marker='p', linestyle='--', label=f'vocab size k = {k3}')
 
     plt.xlabel('Magnitude of n in n_grams')
     plt.ylabel('Perplexity on test set')
-    plt.title(f'Perplexity scores of simple n_grams of varying sizes on test set with vocab size k = {k1, k2}')
+    plt.title(f'Perplexity scores of simple n_grams of varying sizes on test set with vocab size k = {k1, k2, k3}')
     plt.legend()
     plt.grid(True)
 
@@ -209,6 +211,22 @@ for i in range(1, MAX_N_GRAM_LENGTH + 1):
     print (f"For vocab size k = {K} and n = {i} perplexity on {evaluation_set} set is equal to {perplexity}")
 go_into_generation_mode (K)
 
+K = 1200
+corpus_tokens = read_file_from("train", "tokenized_corpus", K)
+counts_of_n_grams, sorted_n_grams = [], []
+for i in range (MAX_N_GRAM_LENGTH, 0, -1):
+    counts_of_i_grams, sorted_i_grams = get_n_grams_infos_from(i, corpus_tokens)
+    counts_of_n_grams.append(counts_of_i_grams)
+    sorted_n_grams.append(sorted_i_grams)
+
+evaluation_set = "test"
+perplexity_scores_K_1200 = []
+for i in range(1, MAX_N_GRAM_LENGTH + 1):
+    perplexity = get_perplexity_score_of_via (evaluation_set, counts_of_n_grams[-i:], i, K)
+    perplexity_scores_K_1200.append(perplexity)
+    print (f"For vocab size k = {K} and n = {i} perplexity on {evaluation_set} set is equal to {perplexity}")
+go_into_generation_mode (K)
+
 
 K = 2000
 corpus_tokens = read_file_from("train", "tokenized_corpus", K)
@@ -226,7 +244,7 @@ for i in range(1, MAX_N_GRAM_LENGTH + 1):
     print (f"For vocab size k = {K} and n = {i} perplexity on {evaluation_set} set is equal to {perplexity}")
 go_into_generation_mode (K)
 
-plot_perplexity (perplexity_scores_K_400, perplexity_scores_K_2000, 400, 2000)
+plot_perplexity (perplexity_scores_K_400, perplexity_scores_K_1200, perplexity_scores_K_2000, 400, 1200, 2000)
 
 
 
