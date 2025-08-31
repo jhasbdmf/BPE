@@ -274,11 +274,13 @@ RMS_PROP_RHO = 0.9
 #RMS_PROP_EPSILON = 0.1e-7
 
 
+
 print (f"BPE k = {K}")
 print (f"learning rate = {SGD_LEARNING_RATE}")
 print (f"learning rate decay per epoch = {LEARNING_RATE_MULTIPLIER_PER_EPOCH}")
 print (f"n_epochs = {N_EPOCHS}")
 print ("_" * 50)
+
 
 
 
@@ -292,7 +294,7 @@ neural_n_gram_model_RMSprop, train_loss_history_RMSprop, val_loss_history_RMSpro
                                                                       )
 
 
-print ("ASKJDHA", evaluate_model_on(neural_n_gram_model_RMSprop, val_set_400))
+#print ("ASKJDHA", evaluate_model_on(neural_n_gram_model_RMSprop, val_set_400))
 
 input_sequence_RMSprop = [78]
 input_sequence_RMSprop = neural_n_gram_model_RMSprop.generate_new_tokens(input_sequence_RMSprop, 200)
@@ -330,16 +332,36 @@ print ("_" * 50)
 
 
 
-filename = "neural_bigram_test_set_perplexities.txt"
+
 RMS_test_perp = np.exp(evaluate_model_on (neural_n_gram_model_RMSprop, test_set_400))
 SGD_test_perp = np.exp(evaluate_model_on (neural_n_gram_model_SGD, test_set_400))
 print (f"RMS test score = {RMS_test_perp}")
 print (f"SGD test score = {SGD_test_perp}")
+
+
+filename = "neural_bigram_test_set_perplexities.txt"
+
+log_message (f"BPE k = {K}", filename)
+log_message (f"n_epochs = {N_EPOCHS}", filename)
+log_message ("_" * 100, filename)
+
+log_message (f"RMSpror initial learning rate = {RMS_PROP_INITIAL_LR}", filename)
+log_message (f"RMSprop rho = {RMS_PROP_RHO}", filename)
+
 log_message(f"RMS test score = {RMS_test_perp}", filename)
+log_message("_" * 50, filename)
 log_message(f"RMS text = {RMS_text}", filename)
-log_message("_"*100, filename)
+log_message("_"*75, filename)
+
+
+
+
+log_message (f"SGD initial learning rate = {SGD_LEARNING_RATE}", filename)
+log_message (f"SDG learning rate decay per epoch = {LEARNING_RATE_MULTIPLIER_PER_EPOCH}", filename)
+
 log_message(f"SGD test score = {SGD_test_perp}", filename)
+log_message("_" * 50, filename)
 log_message(f"SGD text = {SGD_text}", filename)
-log_message("_"*100, filename)
+log_message("_"*75, filename)
 
 plot_perplexity (np.exp(train_loss_history_RMSprop), np.exp(val_loss_history_RMSprop), np.exp(train_loss_history_SGD), np.exp(val_loss_history_SGD))

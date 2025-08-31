@@ -18,3 +18,46 @@ ________________________________________________________________________________
 SGD test score = 67.67406463623047
 SGD text = k and bano er of your faitents of your face the coundear and the sins the charmian away to night and my face the clot and the clain the brought and i have no matter i will not so sween and bano and the sought i will not be afolife and bandaudisince i would you do you shall banger to you shall i have no fellow me the bangread to the sough the breat of the counds i would you have before be sough i will not so soul and my lord hamlet i have better in his olife to you have no no maday i would not in this is a dausough the worthy bread with his fair of his old man 
 ____________________________________________________________________________________________________
+BPE k = 400
+n_epochs = 2
+____________________________________________________________________________________________________
+RMSpror initial learning rate = 0.3
+RMSprop rho = 0.9
+RMS test score = 16.95608139038086
+RMS text = k d could craveral bessayare yround i do not i do not from the gurn of hear that the reason to do i think you well i think so demonecravern of all conflow me in to yare but by the round to ches cassiid the round i should not i first could not i think so cassius for i think it his wall conta laing ears your lead craick d could not what s are yrunes cassity and night bbbessengurelenether to yself a man and that for the gth not nown i should i first guary froar and you o of that naker of any men s are betom i should not from this gurts with night s your lick of all that name but by my lord pare beless 
+___________________________________________________________________________
+SGD initial learning rate = 0.5
+SDG learning rate decay per epoch = 0.95
+SGD test score = 71.11161804199219
+SGD text = k d and the saludispepreturence to the greason and i am i am blt thou ard with you do you not a ms of his bangadome i will not a and abilt and i ll d and biland the gaway to bans that is the gready is a manquitch you have a ss of my father and bland blost thou clay the ss that sletter in the sannot so i will be a sleep and abans that is not clack of the gre i have i ll of a ss in my hearing in my lord i will be ded i ll of my turence i ll you have domitrish of a mangently in the gappollock to the s
+___________________________________________________________________________
+BPE k = 400
+n_epochs = 2
+____________________________________________________________________________________________________
+RMSpror initial learning rate = 0.3
+RMSprop rho = 0.9
+RMS test score = 16.5849552154541
+__________________________________________________
+RMS text = k and it mutoul is now i father s is this siwards gage thou do not a bmself as you are cleangumt ia lord is inhimneach when the words gar the bimights die the bbal changuest ghter dentle from hnarce an withal pe thou must not go and guited me to me milippy let me and some of men i seey son that at a sing une an withal shave good my reving i not go and gue us folons is now the words their bmself to me to coming i seen how like a bbal is ince what will fety that raindie the attwife to me mia exeth new will i seconveral bs thers of men s th
+___________________________________________________________________________
+SGD initial learning rate = 0.5
+SDG learning rate decay per epoch = 0.95
+SGD test score = 71.47084045410156
+__________________________________________________
+SGD text = k of this gentle sed of my claused and seat of my branted to be not sands but to me and i ll d and tor to the ster than to the clausea and the bls i do you not sea and sands but that i do not so much d in the ste i ll you shall not so approabones my lord what he claudispil of my lord prievery one that we will i have you not sed of the weace of his branton this ger d in a sown i ll me not so father and sed of my lord hamlet i have ding of the wo i ll me the bring the choly i ll d in this die i ll you have hearts of his olive me the ste the st
+___________________________________________________________________________
+BPE k = 400
+n_epochs = 15
+____________________________________________________________________________________________________
+RMSpror initial learning rate = 0.3
+RMSprop rho = 0.9
+RMS test score = 6.396552562713623
+__________________________________________________
+RMS text = k sancrge you should be when you am more ybessirge stenest but it vil in sidkles the gmer lexas fall you am slees of ksistone to stone of ker on a is serve death in sider hecroother besentreason and the of your vier there i ouravier lees the grothus thdam solks whelder s spit lord inst thou arrise the of your visguest your cours dam sander oband sgue i ander s spevery thing for the of the gyself have you and have klfrairatted with which their loose come come come wome ref atio if you and have ksider s sportway sees meet elt macbeth be when caesar hath ca
+___________________________________________________________________________
+SGD initial learning rate = 0.5
+SDG learning rate decay per epoch = 0.95
+SGD test score = 67.60160064697266
+__________________________________________________
+SGD text = k you shall not the watuse and that i will not so good night s and thin my hearing to you have before the worthy fair of the brown the wature of his charmight of the wold man to you have day the bil and therefore the bands to you are the broword and the bill the braw the brather to the day and in his father to be dends the wold and thannot so mutring the world of his faio er and the words and in the womil d and that he was my lord othello o er and the day me the wown to be ause and the wown i have you shall be daflday the damany of my dome to be dene and that you are you shall 
+___________________________________________________________________________
