@@ -92,17 +92,26 @@ class Neural_n_gram_model:
 
             token_sequence.append(next_token_index)
         return token_sequence
+    
+def evaluate_model_on(model, dataset):
+    total_loss = 0
+    for x, y in dataset:
+        total_loss += model.forward(x, y)[0]
+    return total_loss/len(dataset)
 
 
 def train_model_with (model: Neural_n_gram_model, 
                          optimizer: str, 
                          lr: float, 
                          n_epochs: int, 
+                         train_set,
+                         val_set,
                          rho: float = 0.9,
                          sgd_lr_multiplier: float = 0.95
                         ):
-    token_pairs = list(zip(preceding_tokens, subsequent_tokens))
-    loss_history = []
+    #token_pairs = list(zip(preceding_tokens, subsequent_tokens))
+    train_loss_history = []
+    val_loss_history = []
 
     if optimizer.lower() == "rmsprop":
         RMSprop_running_square_gradient_avg = np.zeros_like(neural_n_gram_model_RMSprop.token_embedding_table)
@@ -121,9 +130,11 @@ def train_model_with (model: Neural_n_gram_model,
         total_loss = 0
        
         
-        random.shuffle(token_pairs) 
+        #random.shuffle(token_pairs)
+        random.shuffle(train_set) 
       
-        for x,y in token_pairs:
+        #for x,y in token_pairs:
+        for x,y in train_set:
 
             #get the CEL gradient from the forward pass directly
             loss, loss_gradient = model.forward(x, y)
@@ -156,18 +167,27 @@ def train_model_with (model: Neural_n_gram_model,
         
         
 
-        total_loss /= len(preceding_tokens)
-        print (f"average loss is {total_loss}")
-        loss_history.append(total_loss)
+        #total_loss /= len(preceding_tokens)
+        total_loss /= len(train_set)
+        print (f"average train loss is {total_loss}")
+        train_loss_history.append(total_loss)
+
+        avg_val_loss = evaluate_model_on (model, val_set)
+        print (f"average val loss = {avg_val_loss:.5f}")
+        #log_message (f"average val loss = {avg_val_loss:.5f}")
+        val_loss_history.append(avg_val_loss)
+
         print ("_" * 50)
 
 
 
 
-    return model, loss_history
+    return model, train_loss_history, val_loss_history
 
 
-K = 2000
+K = 400
+
+
 corpus_tokens = read_file_from("train", "tokenized_corpus", K)
 vocabulary = read_file_from ("train", "learned_vocabularies", K)
 vocabulary_size = len (vocabulary)
@@ -178,6 +198,27 @@ preceding_tokens = encoded_tokens[:-1]
 subsequent_tokens = encoded_tokens[1:]
 
 
+
+train_set_400 = list(zip(preceding_tokens, subsequent_tokens))
+
+val_tokens = read_file_from("valid", "tokenized_corpus", K)
+encoded_tokens = token_translator.encode_list(val_tokens)
+preceding_tokens = encoded_tokens[:-1]
+subsequent_tokens = encoded_tokens[1:]
+
+val_set_400 = list(zip(preceding_tokens, subsequent_tokens))
+
+test_tokens = read_file_from("test", "tokenized_corpus", K)
+encoded_tokens = token_translator.encode_list(test_tokens)
+preceding_tokens = encoded_tokens[:-1]
+subsequent_tokens = encoded_tokens[1:]
+
+test_set_400 = list(zip(preceding_tokens, subsequent_tokens))
+
+
+
+
+
 neural_n_gram_model_SGD = Neural_n_gram_model(vocabulary_size)
 neural_n_gram_model_RMSprop = Neural_n_gram_model(vocabulary_size)
 
@@ -186,7 +227,7 @@ neural_n_gram_model_RMSprop = Neural_n_gram_model(vocabulary_size)
 SGD_LEARNING_RATE = 0.5
 RMS_PROP_INITIAL_LR = 0.3
 LEARNING_RATE_MULTIPLIER_PER_EPOCH = 0.95
-N_EPOCHS = 15
+N_EPOCHS = 3
 
 RMS_PROP_RHO = 0.9
 #RMS_PROP_EPSILON = 0.1e-7
@@ -200,28 +241,35 @@ print ("_" * 50)
 
 
 
-neural_n_gram_model_RMSprop, loss_history_RMSprop = train_model_with (neural_n_gram_model_RMSprop,
+neural_n_gram_model_RMSprop, train_loss_history_RMSprop, val_loss_history_RMSprop = train_model_with (neural_n_gram_model_RMSprop,
                                                                       "RMSprop",
                                                                       RMS_PROP_INITIAL_LR,
                                                                       N_EPOCHS,
+                                                                      train_set_400,
+                                                                      val_set_400,
                                                                       RMS_PROP_RHO
                                                                       )
 
 
+#print ("ASKJDHA", evaluate_model_on(neural_n_gram_model_RMSprop, val_set_400))
 
 input_sequence_RMSprop = [78]
 input_sequence_RMSprop = neural_n_gram_model_RMSprop.generate_new_tokens(input_sequence_RMSprop, 200)
 decoded_input_sequence_RMSprop = token_translator.decode_list(input_sequence_RMSprop)
 print ("RMSprop text")
 print ("".join(decoded_input_sequence_RMSprop).replace("</w>", " "))
-print (loss_history_RMSprop)
+print (train_loss_history_RMSprop)
 print ("_" * 50)
 
-neural_n_gram_model_SGD, loss_history_SGD = train_model_with (neural_n_gram_model_SGD,
+
+
+neural_n_gram_model_SGD, train_loss_history_SGD, val_loss_history_SGD = train_model_with (neural_n_gram_model_SGD,
                                                                       "SGD",
                                                                       SGD_LEARNING_RATE,
                                                                       N_EPOCHS,
-                                                                      0.9,
+                                                                      train_set_400,
+                                                                      val_set_400,
+                                                                      RMS_PROP_RHO,
                                                                       LEARNING_RATE_MULTIPLIER_PER_EPOCH
                                                                       )
     
@@ -233,5 +281,5 @@ input_sequence_SGD = neural_n_gram_model_SGD.generate_new_tokens(input_sequence_
 decoded_input_sequence_SGD = token_translator.decode_list(input_sequence_SGD)
 print ("SGD text")
 print ("".join(decoded_input_sequence_SGD).replace("</w>", " "))
-print (loss_history_SGD)
+print (train_loss_history_SGD)
 print ("_" * 50)
