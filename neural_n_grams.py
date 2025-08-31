@@ -96,7 +96,7 @@ class Neural_n_gram_model:
 
 def train_model_with (model: Neural_n_gram_model, 
                          optimizer: str, 
-                         lr: int, 
+                         lr: float, 
                          n_epochs: int, 
                          rho: float = 0.9,
                          sgd_lr_multiplier: float = 0.95
@@ -121,7 +121,7 @@ def train_model_with (model: Neural_n_gram_model,
         total_loss = 0
        
         
-        #random.shuffle(token_pairs) 
+        random.shuffle(token_pairs) 
       
         for x,y in token_pairs:
 

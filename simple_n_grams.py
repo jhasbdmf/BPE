@@ -2,7 +2,8 @@ from collections import Counter
 import math
 from bpe_text_segmentor import tokenize_sequence
 from utilities import read_file_from
-
+import matplotlib.pyplot as plt
+import numpy as np
 
 #llm rewrote my method which generated n_grams with a nested loop
 def get_n_gram_counts_from(n: int, corpus_tokens: list):
@@ -101,10 +102,11 @@ def get_next_most_probable_token_after_via_backoff(sequence: list,
 def get_perplexity_score_of_via(corpus_segment: str, 
                                 n_gram_counts: list, 
                                 max_n_gram_len: int, 
+                                k: int = 2000,
                                 backoff_discounter: float = 0.75
                             ):
 
-    corpus_tokens = read_file_from (corpus_segment, "tokenized_corpus")
+    corpus_tokens = read_file_from (corpus_segment, "tokenized_corpus", k)
     total_number_of_unigrams = sum(n_gram_counts[-1].values())
     net_log_P = 0
 
@@ -142,6 +144,29 @@ def get_perplexity_score_of_via(corpus_segment: str,
  
     return perplexity
 
+def plot_perplexity (perplexity_scores1: list, perplexity_scores2: list, k:int):
+    # Indices
+    #indices1 = range(len(perplexity_scores_K_2000))  
+    indices1 = np.arange(len(perplexity_scores1)) + 1
+    indices2 = np.arange(len(perplexity_scores2)) + 1
+
+    #indices2 = range(len(val_loss_history)) 
+
+    # Plot both
+    plt.plot(indices1, perplexity_scores1, marker='o', linestyle='-', label='vocab size k = 400')
+    plt.plot(indices2, perplexity_scores2, marker='s', linestyle='--', label='vocab size k = 2000')
+
+    plt.xlabel('Magnitude of n in n_grams')
+    plt.ylabel('Perplexity on test set')
+    plt.title(f'Perplexity scores of simple n_grams of varying sizes on test set with vocab size k = {k}')
+    plt.legend()
+    plt.grid(True)
+
+    plt.savefig(f"Perplexity_scores_of_simple_n_grams.png", dpi=300, bbox_inches='tight')
+
+    plt.show()
+
+
 def go_into_generation_mode (k: int):
     vocabulary = read_file_from("train", "Learned_vocabularies", k)
     while True:
@@ -155,13 +180,12 @@ def go_into_generation_mode (k: int):
             input_string_tokens.append(next_token)
         
         print ("Generated sequence now is: ", "".join(input_string_tokens).replace("</w>"," "))
-
-K = 2000
-
-corpus_tokens = read_file_from("train", "tokenized_corpus", K)
-
+        break
+    
 MAX_N_GRAM_LENGTH = 10
 
+K = 400
+corpus_tokens = read_file_from("train", "tokenized_corpus", K)
 counts_of_n_grams, sorted_n_grams = [], []
 for i in range (MAX_N_GRAM_LENGTH, 0, -1):
     counts_of_i_grams, sorted_i_grams = get_n_grams_infos_from(i, corpus_tokens)
@@ -169,10 +193,31 @@ for i in range (MAX_N_GRAM_LENGTH, 0, -1):
     sorted_n_grams.append(sorted_i_grams)
 
 evaluation_set = "test"
+perplexity_scores_K_400 = []
 for i in range(1, MAX_N_GRAM_LENGTH + 1):
- 
+    perplexity = get_perplexity_score_of_via (evaluation_set, counts_of_n_grams[-i:], i, K)
+    perplexity_scores_K_400.append(perplexity)
+    print (f"For vocab size k = {K} and n = {i} perplexity on {evaluation_set} set is equal to {perplexity}")
+
+
+
+K = 2000
+corpus_tokens = read_file_from("train", "tokenized_corpus", K)
+counts_of_n_grams, sorted_n_grams = [], []
+for i in range (MAX_N_GRAM_LENGTH, 0, -1):
+    counts_of_i_grams, sorted_i_grams = get_n_grams_infos_from(i, corpus_tokens)
+    counts_of_n_grams.append(counts_of_i_grams)
+    sorted_n_grams.append(sorted_i_grams)
+
+evaluation_set = "test"
+perplexity_scores_K_2000 = []
+for i in range(1, MAX_N_GRAM_LENGTH + 1):
     perplexity = get_perplexity_score_of_via (evaluation_set, counts_of_n_grams[-i:], i)
-    print (f"For n = {i} perplexity on {evaluation_set} set is equal to {perplexity}")
+    perplexity_scores_K_2000.append(perplexity)
+    print (f"For vocab size k = {K} and n = {i} perplexity on {evaluation_set} set is equal to {perplexity}")
+
+
+plot_perplexity (perplexity_scores_K_400, perplexity_scores_K_2000, K)
+
 
 go_into_generation_mode (K)
-
