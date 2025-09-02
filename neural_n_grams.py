@@ -1,25 +1,10 @@
-from utilities import read_file_from, log_message
+from utilities import read_file_from, log_message, Token_Translator
 import numpy as np
 import random
 import copy
 import matplotlib.pyplot as plt
 
-class Token_Translator:
-    def __init__(self, vocab: list):
-        self.symbol_to_index = {symbol:index for index, symbol in enumerate(vocab)}
-        self.index_to_symbol = {index:symbol for index, symbol in enumerate(vocab)}
 
-    def encode_list(self, list_to_encode: list):
-        return [self.symbol_to_index[i] for i in list_to_encode]
-    
-    def decode_list(self, list_to_decode):
-        result = []
-        for i in list_to_decode:
-            # if i is a torch tensor, extract its value
-            #if isinstance(i, torch.Tensor):
-            #    i = i.item()   # now a Python int
-            result.append(self.index_to_symbol[i])
-        return result
 
 class Neural_n_gram_model:
 
