@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.optim as optim
 import math
 from utilities import read_file_from, Token_Translator
 
@@ -177,16 +178,48 @@ target_batches = create_batches(targets, max_context)
 model = NanoGPT(vocab_size, embed_dim, max_context, layers, heads)
 model.eval()
 
+"""
 for i in range(input_batches.size(0)):
     batch_input = input_batches[i].unsqueeze(0)
     batch_target = target_batches[i].unsqueeze(0)
     perp = model.get_perplexity(batch_input, targets=batch_target)
     print(f"Current batch perplexity: {perp:.3f}")
+"""
 
 prefix = input_batches[0, :5].unsqueeze(0)
 generated = model.generate(prefix, max_new_tokens=50, temperature=1.0, top_k=3)
 generated_list = generated[0].tolist()
 generated_text = "".join(token_translator.decode_list(generated_list))
-print("Generated text:", generated_text)
+print("Generated text:", generated_text.replace("</w>", " "))
 
 
+
+optimizer = optim.Adam(model.parameters(), lr=1e-4)  # adjust lr as needed
+
+# Define loss criterion
+criterion = nn.CrossEntropyLoss()
+
+# Training loop example (simplified):
+num_epochs = 5
+model.train()
+for epoch in range(num_epochs):
+    for i in range(input_batches.size(0)):
+        batch_input = input_batches[i].unsqueeze(0)
+        batch_target = target_batches[i].unsqueeze(0)
+
+        optimizer.zero_grad()             # Clear gradients
+        logits = model(batch_input)       # Forward pass
+        loss = criterion(
+            logits.view(-1, vocab_size),  # reshape logits for loss
+            batch_target.view(-1)
+        )
+        loss.backward()                   # Backpropagation
+        optimizer.step()                  # Update weights
+
+        print(f"Epoch {epoch}, Batch {i}, Loss: {loss.item():.4f}")
+
+prefix = input_batches[0, :5].unsqueeze(0)
+generated = model.generate(prefix, max_new_tokens=50, temperature=1.0, top_k=3)
+generated_list = generated[0].tolist()
+generated_text = "".join(token_translator.decode_list(generated_list))
+print("Generated text:", generated_text.replace("</w>", " "))
