@@ -6,6 +6,7 @@ import math
 import copy
 from utilities import read_file_from, Token_Translator, log_message
 import datetime
+import matplotlib.pyplot as plt
 
 
 class Causal_self_Attention(nn.Module):
