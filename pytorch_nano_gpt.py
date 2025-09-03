@@ -355,6 +355,35 @@ def grid_search(hyperparameters: dict,
     return best_train_loss_history, best_val_loss_history, best_model, best_params, best_val_loss
 
 
+
+def plot_best_model_losses(grid_train_loss, grid_val_loss, further_train_loss, further_val_loss, log_filename=None):
+
+    all_train_loss = grid_train_loss + further_train_loss
+
+    all_val_loss = grid_val_loss + further_val_loss
+    epochs = range(1, len(all_train_loss) + 1)
+    
+    plt.figure(figsize=(8, 5))
+    plt.plot(epochs, all_train_loss, label='Average train CEL')
+    plt.plot(epochs, all_val_loss, label='Average validation CEL')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.title('Best Model Training and Validation CEL')
+    plt.legend()
+    timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+    plot_filename = f'nano_GPT_loss_history_{timestamp}.png'
+    plt.savefig(plot_filename)
+    plt.close()
+    
+    message = f"Saved loss plot as {plot_filename}"
+    print(message)
+    if log_filename is not None:
+        log_message("_" * 100, log_filename)
+        log_message(message, log_filename)
+
+
+
+
 #name of log file to save training progress there
 filename = f"training_log_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 
@@ -480,3 +509,12 @@ generated_text = generated_text.replace("</w>", " ")
 print("Generated text:", generated_text)
 log_message(f"Generated text after grid search and specicif best model training:\n {generated_text}", filename)
 log_message("_" * 100, filename)
+
+# Example use right after further training and evaluation:
+plot_best_model_losses(
+    best_grid_search_train_loss_hist,
+    best_grid_search_val_loss_hist,
+    train_loss_hist,
+    val_loss_hist,
+    log_filename=filename
+)
