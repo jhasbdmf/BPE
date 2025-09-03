@@ -4,7 +4,8 @@ import torch.nn.functional as F
 import torch.optim as optim
 import math
 import copy
-from utilities import read_file_from, Token_Translator
+from utilities import read_file_from, Token_Translator, log_message
+import datetime
 
 
 class Causal_self_Attention(nn.Module):
@@ -207,6 +208,7 @@ def train_model(model,
 
             #if verbose:
             #    print(f"Epoch {epoch+1}/{num_epochs}, Batch {i+1}/{num_batches}, Loss: {loss.item():.4f}")
+            #    log_message(f"Epoch {epoch+1}/{num_epochs}, Batch {i+1}/{num_batches}, Loss: {loss.item():.4f}", filename)
 
         avg_train_loss = train_loss_total / num_batches
         train_loss_history.append(avg_train_loss)
@@ -225,8 +227,11 @@ def train_model(model,
         val_loss_history.append(avg_val_loss)
 
         if verbose:
-            print(f"Epoch {epoch+1} completed. Avg Train Loss: {avg_train_loss:.4f}, Avg Val Loss: {avg_val_loss:.4f}")
+            print(f"Epoch {epoch+1}/{num_epochs} completed.\n Avg Train Loss: {avg_train_loss:.4f},\n Avg Val Loss: {avg_val_loss:.4f}")
             print ("_" * 50)
+            log_message(f"Epoch {epoch+1}/{num_epochs} completed.\n Avg Train Loss: {avg_train_loss:.4f},\n Avg Val Loss: {avg_val_loss:.4f}", filename)
+            log_message ("_" * 50, filename)
+
 
         if avg_val_loss < best_val_loss:
             best_val_loss = avg_val_loss
@@ -236,9 +241,11 @@ def train_model(model,
             epochs_without_improvement += 1
             if verbose:
                 print(f"No improvement for {epochs_without_improvement} epochs")
+                log_message(f"No improvement for {epochs_without_improvement} epochs", filename)
             if epochs_without_improvement >= patience:
                 if verbose:
                     print(f"Early stopping triggered after {epoch+1} epochs")
+                    log_message(f"Early stopping triggered after {epoch+1} epochs", filename)
                 break
 
     model.load_state_dict(best_model_state)
@@ -267,7 +274,9 @@ def grid_search(hyperparameters: dict,
     max_ctxs = hyperparameters.get('max_context', [batch_seq_len_default])
 
     for K in Ks:
+        print ("_" * 100)
         print(f"Using vocabulary size K={K}")
+        
 
         # Load or prepare vocabulary & token translator for current K
         vocabulary = read_file_from("train", "learned_vocabularies", K)
@@ -292,7 +301,12 @@ def grid_search(hyperparameters: dict,
                     for n_heads in num_heads_list:
                         for max_ctx in max_ctxs:
                             print(f"Testing: K={K}, lr={lr}, layers={n_layers}, embed_dim={embed_dim}, heads={n_heads}, max_context={max_ctx}")
+                            print ("_" * 75)
 
+                            log_message ("_" * 100, filename)
+                            log_message(f"Testing: K={K}, lr={lr}, layers={n_layers}, embed_dim={embed_dim}, heads={n_heads}, max_context={max_ctx}", filename)
+                            log_message ("_" * 75, filename)
+                            
                             train_input_batches = create_batches(train_inputs, max_ctx)
                             train_target_batches = create_batches(train_targets, max_ctx)
 
@@ -320,6 +334,7 @@ def grid_search(hyperparameters: dict,
                             min_val_loss = min(val_loss_hist)
                             if min_val_loss < best_val_loss:
                                 best_val_loss = min_val_loss
+                                
                                 best_params = {
                                     'vocab_size': K,
                                     'learning_rate': lr,
@@ -333,8 +348,14 @@ def grid_search(hyperparameters: dict,
                                 best_val_loss_history = val_loss_hist
 
                             print(f"Current best val loss: {best_val_loss:.5f}")
+                            #log_message("_" * 50, filename)
+                            log_message (f"Current best val loss: {best_val_loss:.5f}", filename)
 
     return best_train_loss_history, best_val_loss_history, best_model, best_params, best_val_loss
+
+
+#name of log file to save training progress there
+filename = f"training_log_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 
 
 # Define K values to test
@@ -351,7 +372,7 @@ for K in K_values:
 # Define other hyperparameters to search over
 hyperparams = {
     'vocab_size': K_values,
-    'lr': [1e-4],
+    'lr': [1e-3],
     'n_layers': [4],
     'embed_dim': [32],
     'num_heads': [4],
@@ -359,7 +380,7 @@ hyperparams = {
 }
 
 # Call grid_search
-train_losses, val_losses, best_model, best_params, best_val_loss = grid_search(
+best_grid_search_train_loss_hist, best_grid_search_val_loss_hist, best_model, best_params, best_val_loss = grid_search(
     hyperparameters=hyperparams,
     train_tokens_raw=train_tokens_raw,
     val_tokens_raw=val_tokens_raw,
@@ -388,7 +409,12 @@ prefix = torch.tensor([prefix_encoded], dtype=torch.long)
 generated = best_model.generate(prefix, max_new_tokens=50, temperature=1.0, top_k=3)
 generated_list = generated[0].tolist()
 generated_text = "".join(token_translator.decode_list(generated_list))
-print("Generated text:", generated_text.replace("</w>", " "))
+generated_text = generated_text.replace("</w>", " ")
+print("Generated text:", generated_text)
+
+log_message("_" * 100, filename)
+log_message (f"Generated text after grid search:\n {generated_text}", filename)
+log_message("_" * 100, filename)
 
 
 
@@ -418,8 +444,11 @@ val_input_batches = create_batches(val_inputs, best_model.max_seq_len)
 val_target_batches = create_batches(val_targets, best_model.max_seq_len)
 
 # Optionally, continue training the best model for more epochs
-additional_epochs = 5  # Set desired additional epochs
+additional_epochs = 2  # Set desired additional epochs
 learning_rate = best_params['learning_rate']
+
+log_message("Training best grid search model", filename)
+log_message("_" * 75, filename)
 
 best_model, train_loss_hist, val_loss_hist = train_model(
     best_model,
@@ -444,6 +473,9 @@ prefix = torch.tensor([prefix_encoded], dtype=torch.long)
 generated = best_model.generate(prefix, max_new_tokens=50, temperature=1.0, top_k=3)
 generated_list = generated[0].tolist()
 generated_text = "".join(token_translator.decode_list(generated_list))
+generated_text = generated_text.replace("</w>", " ")
 
 # Replace end-of-word tokens with spaces if desired
-print("Generated text:", generated_text.replace("</w>", " "))
+print("Generated text:", generated_text)
+log_message(f"Generated text after grid search and specicif best model training:\n {generated_text}", filename)
+log_message("_" * 100, filename)
