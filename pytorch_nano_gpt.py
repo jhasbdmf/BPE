@@ -389,3 +389,61 @@ generated = best_model.generate(prefix, max_new_tokens=50, temperature=1.0, top_
 generated_list = generated[0].tolist()
 generated_text = "".join(token_translator.decode_list(generated_list))
 print("Generated text:", generated_text.replace("</w>", " "))
+
+
+
+
+#########################################################################
+
+# !!!train the best model further
+vocabulary = read_file_from("train", "learned_vocabularies", best_params['vocab_size'])
+token_translator = Token_Translator(vocabulary)
+
+# Load training tokens for best vocab size
+train_tokens = read_file_from("train", "tokenized_corpus", best_params['vocab_size'])
+train_encoded = token_translator.encode_list(train_tokens)
+train_inputs = train_encoded[:-1]
+train_targets = train_encoded[1:]
+
+# Create training batches using best model's max sequence length
+train_input_batches = create_batches(train_inputs, best_model.max_seq_len)
+train_target_batches = create_batches(train_targets, best_model.max_seq_len)
+
+# Load validation tokens and create validation batches similarly
+val_tokens = read_file_from("valid", "tokenized_corpus", best_params['vocab_size'])
+val_encoded = token_translator.encode_list(val_tokens)
+val_inputs = val_encoded[:-1]
+val_targets = val_encoded[1:]
+val_input_batches = create_batches(val_inputs, best_model.max_seq_len)
+val_target_batches = create_batches(val_targets, best_model.max_seq_len)
+
+# Optionally, continue training the best model for more epochs
+additional_epochs = 5  # Set desired additional epochs
+learning_rate = best_params['learning_rate']
+
+best_model, train_loss_hist, val_loss_hist = train_model(
+    best_model,
+    train_input_batches,
+    train_target_batches,
+    val_input_batches,
+    val_target_batches,
+    num_epochs=additional_epochs,
+    lr=learning_rate,
+    patience=3,
+    verbose=True,
+    seed=None
+)
+
+print("Further training complete.")
+
+# Prepare prefix tokens for generation from the start of training data
+prefix_encoded = train_encoded[:5]  # first 5 tokens as prefix
+prefix = torch.tensor([prefix_encoded], dtype=torch.long)
+
+# Generate text from the trained model
+generated = best_model.generate(prefix, max_new_tokens=50, temperature=1.0, top_k=3)
+generated_list = generated[0].tolist()
+generated_text = "".join(token_translator.decode_list(generated_list))
+
+# Replace end-of-word tokens with spaces if desired
+print("Generated text:", generated_text.replace("</w>", " "))
