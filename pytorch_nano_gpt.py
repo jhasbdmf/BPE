@@ -7,6 +7,7 @@ import copy
 from utilities import read_file_from, Token_Translator, log_message
 import datetime
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class Causal_self_Attention(nn.Module):
@@ -174,6 +175,13 @@ def train_model(model,
         torch.manual_seed(seed)
     #optimizer = optim.Adam(model.parameters(), lr=lr)
     optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=0.01)
+    optimizer = optim.RMSprop(
+        model.parameters(),
+        lr=lr,           # learning rate
+        alpha=0.9,        # smoothing constant for squared gradient moving average
+        eps=1e-6,          # numerical stability term
+        weight_decay=1e-4  # weight decay (L2 regularization)
+    )
     criterion = nn.CrossEntropyLoss()
 
     best_val_loss = float('inf')
@@ -359,16 +367,17 @@ def grid_search(hyperparameters: dict,
 def plot_best_model_losses(grid_train_loss, grid_val_loss, further_train_loss, further_val_loss, log_filename=None):
 
     all_train_loss = grid_train_loss + further_train_loss
-
+    all_train_loss = np.exp(all_train_loss)
     all_val_loss = grid_val_loss + further_val_loss
+    all_val_loss = np.exp(all_val_loss)
     epochs = range(1, len(all_train_loss) + 1)
     
     plt.figure(figsize=(8, 5))
-    plt.plot(epochs, all_train_loss, label='Average train CEL')
-    plt.plot(epochs, all_val_loss, label='Average validation CEL')
+    plt.plot(epochs, all_train_loss, label='Average train perplexity')
+    plt.plot(epochs, all_val_loss, label='Average validation perplexity')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
-    plt.title('Best Model Training and Validation CEL')
+    plt.title('Best Model Training and Validation perplexity')
     plt.legend()
     timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
     plot_filename = f'nano_GPT_loss_history_{timestamp}.png'
