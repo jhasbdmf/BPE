@@ -136,17 +136,17 @@ class NanoGPT(nn.Module):
             generated = torch.cat([generated, next_token], dim=1)
         return generated
 
-    def get_perplexity(self, tokens, targets=None):
-        if targets is None:
-            targets = tokens[:, 1:]
+    def get_perplexity(self, tokens, train_targets=None):
+        if train_targets is None:
+            train_targets = tokens[:, 1:]
             tokens = tokens[:, :-1]
         logits = self(tokens)
 
         logits_flat = logits.reshape(-1, self.vocab_size)
-        targets_flat = targets.reshape(-1)
+        train_targets_flat = train_targets.reshape(-1)
 
         loss_fn = nn.CrossEntropyLoss()
-        loss = loss_fn(logits_flat, targets_flat)
+        loss = loss_fn(logits_flat, train_targets_flat)
         return torch.exp(loss)
 
 
@@ -155,39 +155,83 @@ def create_batches(token_sequence, batch_length):
     trimmed_seq = token_sequence[:full_batches * batch_length]
     return torch.tensor(trimmed_seq, dtype=torch.long).view(full_batches, batch_length)
 
-def train_model(model, input_batches, target_batches, num_epochs=5, lr=1e-4, seed=None, verbose=True):
+
+def train_model(model, 
+                train_input_batches, 
+                train_target_batches, 
+                val_input_batches, 
+                val_target_batches, 
+                num_epochs=5, 
+                lr=1e-4, 
+                seed=None, 
+                patience=3, 
+                verbose=True):
     if seed is not None:
         torch.manual_seed(seed)
     optimizer = optim.Adam(model.parameters(), lr=lr)
     criterion = nn.CrossEntropyLoss()
-    model.train()
 
-    num_batches = input_batches.size(0)
+    best_val_loss = float('inf')
+    epochs_without_improvement = 0
+
+    num_batches = train_input_batches.size(0)
+
     for epoch in range(num_epochs):
         if seed is not None:
-            # Change seed per epoch for reproducibility but different permutations
             torch.manual_seed(seed + epoch)
 
         perm = torch.randperm(num_batches)
-        input_batches_shuffled = input_batches[perm]
-        target_batches_shuffled = target_batches[perm]
+        train_input_batches_shuffled = train_input_batches[perm]
+        train_target_batches_shuffled = train_target_batches[perm]
 
+        model.train()
         for i in range(num_batches):
-            batch_input = input_batches_shuffled[i].unsqueeze(0)
-            batch_target = target_batches_shuffled[i].unsqueeze(0)
+            batch_input = train_input_batches_shuffled[i].unsqueeze(0)
+            batch_target = train_target_batches_shuffled[i].unsqueeze(0)
 
             optimizer.zero_grad()
             logits = model(batch_input)
-            loss = criterion(
-                logits.view(-1, model.vocab_size),
-                batch_target.view(-1)
-            )
+            loss = criterion(logits.view(-1, model.vocab_size), batch_target.view(-1))
             loss.backward()
             optimizer.step()
+
             if verbose:
-                print(f"Epoch {epoch+1}/{num_epochs}, Batch {i}, Loss: {loss.item():.4f}")
-            
-    model.eval()
+                print(f"Epoch {epoch+1}/{num_epochs}, Batch {i+1}/{num_batches}, Loss: {loss.item():.4f}")
+
+       
+        model.eval()
+        val_loss_total = 0.0
+        with torch.no_grad():
+            for j in range(val_input_batches.size(0)):
+                val_input = val_input_batches[j].unsqueeze(0)
+                val_target = val_target_batches[j].unsqueeze(0)
+                val_logits = model(val_input)
+                val_loss = criterion(val_logits.view(-1, model.vocab_size), val_target.view(-1))
+                val_loss_total += val_loss.item()
+
+        avg_val_loss = val_loss_total / val_input_batches.size(0)
+        if verbose:
+            print ("_" * 50)
+            print(f"Epoch {epoch+1} validation average loss: {avg_val_loss:.4f}")
+            print ("_" * 50)
+
+        # Early stopping check
+        if avg_val_loss < best_val_loss:
+            best_val_loss = avg_val_loss
+            epochs_without_improvement = 0
+        else:
+            epochs_without_improvement += 1
+            if verbose:
+                print ("_" * 50)
+                print(f"No improvement for {epochs_without_improvement} epochs")
+                print ("_" * 50)
+
+        if epochs_without_improvement >= patience:
+            if verbose:
+                print ("_" * 100)
+                print(f"Early stopping triggered after {epoch+1} epochs")
+                print ("_" * 100)
+            break
 
 
 K = 400
@@ -197,34 +241,41 @@ layers = 3
 heads = 4
 
 vocabulary = read_file_from("train", "learned_vocabularies", K)
-corpus_tokens = read_file_from("train", "tokenized_corpus", K)
 vocab_size = len(vocabulary)
-
 token_translator = Token_Translator(vocabulary)
-encoded_tokens = token_translator.encode_list(corpus_tokens)
 
-inputs = encoded_tokens[:-1]
-targets = encoded_tokens[1:]
+train_tokens = read_file_from("train", "tokenized_corpus", K)
+train_encoded_tokens = token_translator.encode_list(train_tokens)
+train_inputs = train_encoded_tokens[:-1]
+train_targets = train_encoded_tokens[1:]
+train_input_batches = create_batches(train_inputs, max_context)
+train_target_batches = create_batches(train_targets, max_context)
 
-input_batches = create_batches(inputs, max_context)
-target_batches = create_batches(targets, max_context)
+val_tokens = read_file_from("valid", "tokenized_corpus", K)
+val_encoded_tokens = token_translator.encode_list(val_tokens)
+val_inputs = val_encoded_tokens[:-1]
+val_targets = val_encoded_tokens[1:]
+val_input_batches = create_batches(val_inputs, max_context)
+val_target_batches = create_batches(val_targets, max_context)
+
+
 
 model = NanoGPT(vocab_size, embed_dim, max_context, layers, heads)
 model.eval()
 
 
-prefix = input_batches[0, :5].unsqueeze(0)
+prefix = train_input_batches[0, :5].unsqueeze(0)
 generated = model.generate(prefix, max_new_tokens=50, temperature=1.0, top_k=3)
 generated_list = generated[0].tolist()
 generated_text = "".join(token_translator.decode_list(generated_list))
 print("Generated text:", generated_text.replace("</w>", " "))
 
-num_epochs = 1
+num_epochs = 5
 lr = 1e-4
-train_model(model, input_batches, target_batches, num_epochs, lr)
+train_model(model, train_input_batches, train_target_batches, val_input_batches, val_target_batches, num_epochs, lr)
 
 
-prefix = input_batches[0, :5].unsqueeze(0)
+prefix = train_input_batches[0, :5].unsqueeze(0)
 generated = model.generate(prefix, max_new_tokens=50, temperature=1.0, top_k=3)
 generated_list = generated[0].tolist()
 generated_text = "".join(token_translator.decode_list(generated_list))
