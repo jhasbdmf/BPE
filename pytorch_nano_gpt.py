@@ -155,14 +155,26 @@ def create_batches(token_sequence, batch_length):
     trimmed_seq = token_sequence[:full_batches * batch_length]
     return torch.tensor(trimmed_seq, dtype=torch.long).view(full_batches, batch_length)
 
-def train_model(model, input_batches, target_batches, num_epochs=5, lr=1e-4, verbose=True):
+def train_model(model, input_batches, target_batches, num_epochs=5, lr=1e-4, seed=None, verbose=True):
+    if seed is not None:
+        torch.manual_seed(seed)
     optimizer = optim.Adam(model.parameters(), lr=lr)
     criterion = nn.CrossEntropyLoss()
     model.train()
+
+    num_batches = input_batches.size(0)
     for epoch in range(num_epochs):
-        for i in range(input_batches.size(0)):
-            batch_input = input_batches[i].unsqueeze(0)
-            batch_target = target_batches[i].unsqueeze(0)
+        if seed is not None:
+            # Change seed per epoch for reproducibility but different permutations
+            torch.manual_seed(seed + epoch)
+
+        perm = torch.randperm(num_batches)
+        input_batches_shuffled = input_batches[perm]
+        target_batches_shuffled = target_batches[perm]
+
+        for i in range(num_batches):
+            batch_input = input_batches_shuffled[i].unsqueeze(0)
+            batch_target = target_batches_shuffled[i].unsqueeze(0)
 
             optimizer.zero_grad()
             logits = model(batch_input)
@@ -173,8 +185,9 @@ def train_model(model, input_batches, target_batches, num_epochs=5, lr=1e-4, ver
             loss.backward()
             optimizer.step()
             if verbose:
-                print(f"Epoch {epoch}, Batch {i}, Loss: {loss.item():.4f}")
-
+                print(f"Epoch {epoch+1}/{num_epochs}, Batch {i}, Loss: {loss.item():.4f}")
+            
+    model.eval()
 
 
 K = 400
@@ -199,13 +212,6 @@ target_batches = create_batches(targets, max_context)
 model = NanoGPT(vocab_size, embed_dim, max_context, layers, heads)
 model.eval()
 
-"""
-for i in range(input_batches.size(0)):
-    batch_input = input_batches[i].unsqueeze(0)
-    batch_target = target_batches[i].unsqueeze(0)
-    perp = model.get_perplexity(batch_input, targets=batch_target)
-    print(f"Current batch perplexity: {perp:.3f}")
-"""
 
 prefix = input_batches[0, :5].unsqueeze(0)
 generated = model.generate(prefix, max_new_tokens=50, temperature=1.0, top_k=3)
@@ -213,34 +219,11 @@ generated_list = generated[0].tolist()
 generated_text = "".join(token_translator.decode_list(generated_list))
 print("Generated text:", generated_text.replace("</w>", " "))
 
-num_epochs = 5
+num_epochs = 1
 lr = 1e-4
 train_model(model, input_batches, target_batches, num_epochs, lr)
 
 
-"""
-optimizer = optim.Adam(model.parameters(), lr=1e-4) 
-criterion = nn.CrossEntropyLoss()
-
-
-
-model.train()
-for epoch in range(num_epochs):
-    for i in range(input_batches.size(0)):
-        batch_input = input_batches[i].unsqueeze(0)
-        batch_target = target_batches[i].unsqueeze(0)
-
-        optimizer.zero_grad()             # Clear gradients
-        logits = model(batch_input)       # Forward pass
-        loss = criterion(
-            logits.view(-1, vocab_size),  # reshape logits for loss
-            batch_target.view(-1)
-        )
-        loss.backward()                   # Backpropagation
-        optimizer.step()                  # Update weights
-
-        print(f"Epoch {epoch}, Batch {i}, Loss: {loss.item():.4f}")
-"""
 prefix = input_batches[0, :5].unsqueeze(0)
 generated = model.generate(prefix, max_new_tokens=50, temperature=1.0, top_k=3)
 generated_list = generated[0].tolist()
