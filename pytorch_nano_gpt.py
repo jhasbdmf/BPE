@@ -174,7 +174,8 @@ def train_model(model,
     if seed is not None:
         torch.manual_seed(seed)
     #optimizer = optim.Adam(model.parameters(), lr=lr)
-    optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=0.01)
+    #optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=0.01)
+
     optimizer = optim.RMSprop(
         model.parameters(),
         lr=lr,           # learning rate
@@ -182,6 +183,7 @@ def train_model(model,
         eps=1e-6,          # numerical stability term
         weight_decay=1e-4  # weight decay (L2 regularization)
     )
+    
     criterion = nn.CrossEntropyLoss()
 
     best_val_loss = float('inf')

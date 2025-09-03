@@ -2,42 +2,42 @@ ________________________________________________________________________________
 Testing: K=400, lr=0.001, layers=4, embed_dim=32, heads=4, max_context=128
 ___________________________________________________________________________
 Epoch 1/1 completed.
- Avg Train Loss: 5.1775,
- Avg Val Loss: 4.7268
+ Avg Train Loss: 5.2529,
+ Avg Val Loss: 4.9234
 __________________________________________________
-Current best val loss: 4.72684
+Current best val loss: 4.92335
 ____________________________________________________________________________________________________
 Testing: K=1200, lr=0.001, layers=4, embed_dim=32, heads=4, max_context=128
 ___________________________________________________________________________
 Epoch 1/1 completed.
- Avg Train Loss: 6.2548,
- Avg Val Loss: 5.9490
+ Avg Train Loss: 6.2496,
+ Avg Val Loss: 6.0404
 __________________________________________________
-Current best val loss: 4.72684
+Current best val loss: 4.92335
 ____________________________________________________________________________________________________
 Testing: K=2000, lr=0.001, layers=4, embed_dim=32, heads=4, max_context=128
 ___________________________________________________________________________
 Epoch 1/1 completed.
- Avg Train Loss: 6.5451,
- Avg Val Loss: 6.3200
+ Avg Train Loss: 6.5529,
+ Avg Val Loss: 6.4035
 __________________________________________________
-Current best val loss: 4.72684
+Current best val loss: 4.92335
 ____________________________________________________________________________________________________
 Generated text after grid search:
- the trageen the flughts of the ft and and the dabrown a brown of a bus i am to solts the barbrouluse of the drong a c
+ the tragepuritese and i cown to the clt and i am a sander thus and i ll and brouled the bangreatert of the sown i am the 
 ____________________________________________________________________________________________________
 Training best grid search model
 ___________________________________________________________________________
 Epoch 1/2 completed.
- Avg Train Loss: 4.5541,
- Avg Val Loss: 4.4903
+ Avg Train Loss: 4.7467,
+ Avg Val Loss: 4.6667
 __________________________________________________
 Epoch 2/2 completed.
- Avg Train Loss: 4.3908,
- Avg Val Loss: 4.3916
+ Avg Train Loss: 4.5759,
+ Avg Val Loss: 4.5643
 __________________________________________________
 Generated text after grid search and specicif best model training:
- the tragemils the cown to the bed and block to folm of the work to ft of the blot to the c i do not to be a bangenday to be a
+ the tragep and i have sweitia soooos and sed to a sweil and womill to blose of the sed and sed and foold and i am i am 
 ____________________________________________________________________________________________________
 ____________________________________________________________________________________________________
-Saved loss plot as best_model_loss_20250903_213347.png
+Saved loss plot as nano_GPT_loss_history_20250903_215126.png
