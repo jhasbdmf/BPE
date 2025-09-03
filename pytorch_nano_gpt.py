@@ -243,88 +243,12 @@ def train_model(model,
     model.load_state_dict(best_model_state)
     return model, train_loss_history, val_loss_history
 
-def grid_search(hyperparameters: dict,
-                train_input_batches,
-                train_target_batches,
-                val_input_batches,
-                val_target_batches,
-                n_epochs: int):
-    best_val_loss = float("inf")
-    best_params = {}
-    best_model = None
-    best_train_loss_history = None
-    best_val_loss_history = None
 
-    # Extract hyperparameter grid options
-    learning_rates = hyperparameters.get('lr', [])
-    num_layers_list = hyperparameters.get('n_layers', [])
-    embed_dims = hyperparameters.get('embed_dim', [])
-    num_heads_list = hyperparameters.get('num_heads', [])
-    max_ctx_lengths = hyperparameters.get('max_context', [])
 
-    # Use defaults if any list empty, to avoid empty iteration
-    if not learning_rates:
-        learning_rates = [1e-4]
-    if not num_layers_list:
-        num_layers_list = [4]
-    if not embed_dims:
-        embed_dims = [64]
-    if not num_heads_list:
-        num_heads_list = [4]
-    if not max_ctx_lengths:
-        max_ctx_lengths = [128]
-
-    for lr in learning_rates:
-        for n_layers in num_layers_list:
-            for embed_dim in embed_dims:
-                for n_heads in num_heads_list:
-                    for max_ctx in max_ctx_lengths:
-
-                        print(f"Training NanoGPT with lr={lr}, layers={n_layers}, embed_dim={embed_dim}, heads={n_heads}, max_context={max_ctx}")
-
-                        model = NanoGPT(
-                            vocab_size=len(train_input_batches[0].unique()),  # or pass vocab_size separately
-                            embed_size=embed_dim,
-                            max_seq_len=max_ctx,
-                            num_layers=n_layers,
-                            num_heads=n_heads
-                        )
-
-                        trained_model, train_loss_history, val_loss_history = train_model(
-                            model,
-                            train_input_batches,
-                            train_target_batches,
-                            val_input_batches,
-                            val_target_batches,
-                            num_epochs=n_epochs,
-                            lr=lr,
-                            patience=3,
-                            verbose=True
-                        )
-
-                        min_val_loss = min(val_loss_history)
-
-                        if min_val_loss < best_val_loss:
-                            best_val_loss = min_val_loss
-                            best_params = {
-                                'learning_rate': lr,
-                                'num_layers': n_layers,
-                                'embed_dim': embed_dim,
-                                'num_heads': n_heads,
-                                'max_context': max_ctx
-                            }
-                            best_model = trained_model
-                            best_train_loss_history = train_loss_history
-                            best_val_loss_history = val_loss_history
-
-                        print(f"Current best val loss: {best_val_loss:.5f}")
-
-    return best_train_loss_history, best_val_loss_history, best_model, best_params, best_val_loss
 
 def grid_search(hyperparameters: dict,
-                train_tokens: list,
-                val_tokens: list,
-                vocab: list,
+                train_tokens_raw: dict,  # dict mapping K -> raw tokens list
+                val_tokens_raw: dict,    # likewise for validation tokens
                 n_epochs: int,
                 batch_seq_len_default=128):
     best_val_loss = float("inf")
@@ -333,106 +257,133 @@ def grid_search(hyperparameters: dict,
     best_train_loss_history = None
     best_val_loss_history = None
 
-    token_translator = Token_Translator(vocab)
-    vocab_size = len(vocab)
+    Ks = hyperparameters.get('vocab_size', [400])  # Add vocab size hyperparameter
 
-    # Unpack hyperparameter grids or set defaults
     learning_rates = hyperparameters.get('lr', [1e-4])
     num_layers_list = hyperparameters.get('n_layers', [4])
     embed_dims = hyperparameters.get('embed_dim', [64])
     num_heads_list = hyperparameters.get('num_heads', [4])
     max_ctxs = hyperparameters.get('max_context', [batch_seq_len_default])
 
-    for lr in learning_rates:
-        for n_layers in num_layers_list:
-            for embed_dim in embed_dims:
-                for n_heads in num_heads_list:
-                    for max_ctx in max_ctxs:
-                        print ("_" * 100)
-                        print(f"Testing: lr={lr}, layers={n_layers}, embed_dim={embed_dim}, heads={n_heads}, max_context={max_ctx}")
-                        print ("_" * 75)
-                        # Prepare training batches
-                        train_encoded = token_translator.encode_list(train_tokens)
-                        train_inputs = train_encoded[:-1]
-                        train_targets = train_encoded[1:]
-                        train_input_batches = create_batches(train_inputs, max_ctx)
-                        train_target_batches = create_batches(train_targets, max_ctx)
+    for K in Ks:
+        print(f"Using vocabulary size K={K}")
 
-                        # Prepare validation batches
-                        val_encoded = token_translator.encode_list(val_tokens)
-                        val_inputs = val_encoded[:-1]
-                        val_targets = val_encoded[1:]
-                        val_input_batches = create_batches(val_inputs, max_ctx)
-                        val_target_batches = create_batches(val_targets, max_ctx)
+        # Load or prepare vocabulary & token translator for current K
+        vocabulary = read_file_from("train", "learned_vocabularies", K)
+        token_translator = Token_Translator(vocabulary)
 
-                        model = NanoGPT(vocab_size, embed_dim, max_ctx, n_layers, n_heads)
+        # Get raw tokens for current K
+        train_tokens = train_tokens_raw[K]
+        val_tokens = val_tokens_raw[K]
 
-                        trained_model, train_loss_hist, val_loss_hist = train_model(
-                            model,
-                            train_input_batches,
-                            train_target_batches,
-                            val_input_batches,
-                            val_target_batches,
-                            num_epochs=n_epochs,
-                            lr=lr,
-                            patience=3,
-                            verbose=True
-                        )
+        # Encode tokens, prepare batches outside inner hyperparam loops for efficiency
+        train_encoded = token_translator.encode_list(train_tokens)
+        train_inputs = train_encoded[:-1]
+        train_targets = train_encoded[1:]
 
-                        min_val_loss = min(val_loss_hist)
-                        if min_val_loss < best_val_loss:
-                            best_val_loss = min_val_loss
-                            best_params = {
-                                'learning_rate': lr,
-                                'num_layers': n_layers,
-                                'embed_dim': embed_dim,
-                                'num_heads': n_heads,
-                                'max_context': max_ctx
-                            }
-                            best_model = trained_model
-                            best_train_loss_history = train_loss_hist
-                            best_val_loss_history = val_loss_hist
+        val_encoded = token_translator.encode_list(val_tokens)
+        val_inputs = val_encoded[:-1]
+        val_targets = val_encoded[1:]
 
-                        print(f"Current best val loss: {best_val_loss:.5f}")
-                        #print ("_" * 50)
+        for lr in learning_rates:
+            for n_layers in num_layers_list:
+                for embed_dim in embed_dims:
+                    for n_heads in num_heads_list:
+                        for max_ctx in max_ctxs:
+                            print(f"Testing: K={K}, lr={lr}, layers={n_layers}, embed_dim={embed_dim}, heads={n_heads}, max_context={max_ctx}")
+
+                            train_input_batches = create_batches(train_inputs, max_ctx)
+                            train_target_batches = create_batches(train_targets, max_ctx)
+
+                            val_input_batches = create_batches(val_inputs, max_ctx)
+                            val_target_batches = create_batches(val_targets, max_ctx)
+
+                            model = NanoGPT(vocab_size=len(vocabulary), 
+                                           embed_size=embed_dim, 
+                                           max_seq_len=max_ctx, 
+                                           num_layers=n_layers, 
+                                           num_heads=n_heads)
+
+                            trained_model, train_loss_hist, val_loss_hist = train_model(
+                                model,
+                                train_input_batches,
+                                train_target_batches,
+                                val_input_batches,
+                                val_target_batches,
+                                num_epochs=n_epochs,
+                                lr=lr,
+                                patience=3,
+                                verbose=True
+                            )
+
+                            min_val_loss = min(val_loss_hist)
+                            if min_val_loss < best_val_loss:
+                                best_val_loss = min_val_loss
+                                best_params = {
+                                    'vocab_size': K,
+                                    'learning_rate': lr,
+                                    'num_layers': n_layers,
+                                    'embed_dim': embed_dim,
+                                    'num_heads': n_heads,
+                                    'max_context': max_ctx
+                                }
+                                best_model = trained_model
+                                best_train_loss_history = train_loss_hist
+                                best_val_loss_history = val_loss_hist
+
+                            print(f"Current best val loss: {best_val_loss:.5f}")
 
     return best_train_loss_history, best_val_loss_history, best_model, best_params, best_val_loss
 
 
-# Example call:
-K = 400
+# Define K values to test
+K_values = [400, 1200, 2000]
 
-vocabulary = read_file_from("train", "learned_vocabularies", K)
-train_tokens = read_file_from("train", "tokenized_corpus", K)
-val_tokens = read_file_from("valid", "tokenized_corpus", K)
+# Prepare dictionaries mapping K -> token lists (raw)
+train_tokens_raw = {}
+val_tokens_raw = {}
 
+for K in K_values:
+    train_tokens_raw[K] = read_file_from("train", "tokenized_corpus", K)
+    val_tokens_raw[K] = read_file_from("valid", "tokenized_corpus", K)
+
+# Define other hyperparameters to search over
 hyperparams = {
+    'vocab_size': K_values,
     'lr': [1e-4],
     'n_layers': [4],
-    'embed_dim': [32, 64],
+    'embed_dim': [32],
     'num_heads': [4],
     'max_context': [128]
 }
 
-train_loss, val_loss, best_model, best_params, best_val_loss = grid_search(
-    hyperparams,
-    train_tokens,
-    val_tokens,
-    vocabulary,
-    n_epochs=1,
-    batch_seq_len_default=128
+# Call grid_search
+train_losses, val_losses, best_model, best_params, best_val_loss = grid_search(
+    hyperparameters=hyperparams,
+    train_tokens_raw=train_tokens_raw,
+    val_tokens_raw=val_tokens_raw,
+    #vocab=None,  
+    n_epochs=1
 )
 
-token_translator = Token_Translator(vocabulary)
 
-# Prepare training batches
+vocabulary = read_file_from("train", "learned_vocabularies", best_params['vocab_size'])
+token_translator = Token_Translator(vocabulary)
+train_tokens = read_file_from("train", "tokenized_corpus", best_params['vocab_size'])
+
 train_encoded = token_translator.encode_list(train_tokens)
 train_inputs = train_encoded[:-1]
 train_targets = train_encoded[1:]
-train_input_batches = create_batches(train_inputs,  best_model.max_seq_len)
 
+# Use the max_seq_len from best_model for batching consistency
+train_input_batches = create_batches(train_inputs, best_model.max_seq_len)
+train_target_batches = create_batches(train_targets, best_model.max_seq_len)
 
-prefix = train_input_batches[0, :5].unsqueeze(0)
+# Take prefix from flat encoded tokens, before batching
+prefix_encoded = train_encoded[:5]
+prefix = torch.tensor([prefix_encoded], dtype=torch.long)
+
+# Generate from prefix tensor
 generated = best_model.generate(prefix, max_new_tokens=50, temperature=1.0, top_k=3)
 generated_list = generated[0].tolist()
 generated_text = "".join(token_translator.decode_list(generated_list))
