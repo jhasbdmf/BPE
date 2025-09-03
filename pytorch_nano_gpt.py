@@ -155,6 +155,27 @@ def create_batches(token_sequence, batch_length):
     trimmed_seq = token_sequence[:full_batches * batch_length]
     return torch.tensor(trimmed_seq, dtype=torch.long).view(full_batches, batch_length)
 
+def train_model(model, input_batches, target_batches, num_epochs=5, lr=1e-4, verbose=True):
+    optimizer = optim.Adam(model.parameters(), lr=lr)
+    criterion = nn.CrossEntropyLoss()
+    model.train()
+    for epoch in range(num_epochs):
+        for i in range(input_batches.size(0)):
+            batch_input = input_batches[i].unsqueeze(0)
+            batch_target = target_batches[i].unsqueeze(0)
+
+            optimizer.zero_grad()
+            logits = model(batch_input)
+            loss = criterion(
+                logits.view(-1, model.vocab_size),
+                batch_target.view(-1)
+            )
+            loss.backward()
+            optimizer.step()
+            if verbose:
+                print(f"Epoch {epoch}, Batch {i}, Loss: {loss.item():.4f}")
+
+
 
 K = 400
 embed_dim = 64
@@ -192,15 +213,17 @@ generated_list = generated[0].tolist()
 generated_text = "".join(token_translator.decode_list(generated_list))
 print("Generated text:", generated_text.replace("</w>", " "))
 
+num_epochs = 5
+lr = 1e-4
+train_model(model, input_batches, target_batches, num_epochs, lr)
 
 
-optimizer = optim.Adam(model.parameters(), lr=1e-4)  # adjust lr as needed
-
-# Define loss criterion
+"""
+optimizer = optim.Adam(model.parameters(), lr=1e-4) 
 criterion = nn.CrossEntropyLoss()
 
-# Training loop example (simplified):
-num_epochs = 5
+
+
 model.train()
 for epoch in range(num_epochs):
     for i in range(input_batches.size(0)):
@@ -217,7 +240,7 @@ for epoch in range(num_epochs):
         optimizer.step()                  # Update weights
 
         print(f"Epoch {epoch}, Batch {i}, Loss: {loss.item():.4f}")
-
+"""
 prefix = input_batches[0, :5].unsqueeze(0)
 generated = model.generate(prefix, max_new_tokens=50, temperature=1.0, top_k=3)
 generated_list = generated[0].tolist()
