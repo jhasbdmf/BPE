@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import math
+import copy
 from utilities import read_file_from, Token_Translator
 
 
@@ -155,7 +156,7 @@ def create_batches(token_sequence, batch_length):
     trimmed_seq = token_sequence[:full_batches * batch_length]
     return torch.tensor(trimmed_seq, dtype=torch.long).view(full_batches, batch_length)
 
-import torch.optim as optim
+
 
 def train_model(model, 
                 train_input_batches, 
@@ -179,6 +180,7 @@ def train_model(model,
 
     train_loss_history = []
     val_loss_history = []
+    best_model_state = copy.deepcopy(model.state_dict())
 
     for epoch in range(num_epochs):
         if seed is not None:
@@ -222,27 +224,23 @@ def train_model(model,
         val_loss_history.append(avg_val_loss)
 
         if verbose:
-            print ("_" * 50)
-            print(f"Epoch {epoch+1} completed. \n Avg Train Loss: {avg_train_loss:.4f}, \n Avg Val Loss: {avg_val_loss:.4f}")
-            print ("_" * 50)
+            print(f"Epoch {epoch+1} completed. Avg Train Loss: {avg_train_loss:.4f}, Avg Val Loss: {avg_val_loss:.4f}")
 
         if avg_val_loss < best_val_loss:
             best_val_loss = avg_val_loss
+            best_model_state = copy.deepcopy(model.state_dict())
             epochs_without_improvement = 0
         else:
             epochs_without_improvement += 1
             if verbose:
-                print ("_" * 50)
                 print(f"No improvement for {epochs_without_improvement} epochs")
-                print ("_" * 50)
             if epochs_without_improvement >= patience:
                 if verbose:
-                    print ("_" * 100)
                     print(f"Early stopping triggered after {epoch+1} epochs")
-                    print ("_" * 100)
                 break
 
-    return train_loss_history, val_loss_history
+    model.load_state_dict(best_model_state)
+    return model, train_loss_history, val_loss_history
 
 
 
@@ -284,7 +282,7 @@ print("Generated text:", generated_text.replace("</w>", " "))
 
 num_epochs = 2
 lr = 1e-4
-train_loss_history, val_loss_history = train_model(model, train_input_batches, train_target_batches, val_input_batches, val_target_batches, num_epochs, lr)
+trained_model, train_loss_history, val_loss_history = train_model(model, train_input_batches, train_target_batches, val_input_batches, val_target_batches, num_epochs, lr)
 
 print ("train loss", train_loss_history)
 print ("val loss", val_loss_history)
