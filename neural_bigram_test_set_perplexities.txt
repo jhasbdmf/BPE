@@ -28,3 +28,63 @@ SGD test score = 67.69792175292969
 __________________________________________________
 SGD text = k you are you are you know not be so father and thice and the word of the womil of the wresturn and i ll d of the braw of his father and the wrs and the wompeophell not a wressense the womildafothus enobern to be so less and thus enobercoiless of the bus endatio what is the wome and thus ene and thus and thus enobart and i have you are not a wome and i am i ll me the wrs the bus caesar s of this is the womil and thin my bus and i have betch d and i am soothiluse and i am sough d and i have you have dafoi
 ___________________________________________________________________________
+BPE k = 400
+n_epochs = 15
+____________________________________________________________________________________________________
+RMSpror initial learning rate = 0.3
+RMSprop rho = 0.9
+RMS test score = 6.471538543701172
+__________________________________________________
+RMS text = k that dough he cks mself halladanio er dough our natia ham sider where should you and we have spamaster the ster that would cond of his danio helighly as dies to have off my those belenfear d to belenfllate clause you cassius never exeunficerein lives of his honessense you cladle claumel to have sporrobray but mself the ster danity dedious when in lights lenobweeimated her bracladle port rtine mine oterculedania lius new sings well lius but mour rink thou ancereon t how is a iago iago o er dle cerein lius ne
+___________________________________________________________________________
+SGD initial learning rate = 0.5
+SDG learning rate decay per epoch = 0.95
+SGD test score = 67.77297973632812
+__________________________________________________
+SGD text = k and my day the caudius and that he s and my lord hamlet what is a woman i will i will not to the caput of my heard and the demonemian i am gone and the demetene and the demembitys of the deed with a ger the caughter and that i am ger the demoneen the demona i do you shall not i do you and my day i am gone of bread and the call d to be soliet me to the demeands of the choose that s the caput the croom in a wompecrow of my heard and that he hath sweemilia wooold to the call the deed with you and the chark of my lord hamlet why then the caughts of my d
+___________________________________________________________________________
+BPE k = 400
+n_epochs = 15
+____________________________________________________________________________________________________
+RMSpror initial learning rate = 0.3
+RMSprop rho = 0.9
+RMS test score = 6.423504829406738
+__________________________________________________
+RMS text = k and candiscrisinfirmight go alards dene to ene to octage shes must ture gernated but it ep us enform thive to octation was and tis gernear it might go you heales who compayst banio most ainfirm bed as to ene to ene to occanother occlyst bonive thought hearts in my thought go to occame a devolve let wounting them bania deff chornats you healter part on sion heudiscristilysed but it might as it ek most hastenforcanother converal firmight go alarniflean honoules must your ting thee worse of trude to de
+___________________________________________________________________________
+SGD initial learning rate = 0.5
+SDG learning rate decay per epoch = 0.95
+SGD test score = 67.99909210205078
+__________________________________________________
+SGD text = k the ct i ll me i have dring and i am sed and i have dring of a counding to block d the bus ene er d and thin the wo i ll me i am not be so mustappy you shall have no foown d and thereof my heard and i am i ll me the cans and thretries of my fair bus i have dappa counds to be ger of my faitried with a countrius caesar and i have no folonius what s and thereof the womilughts of a cangentlepity and i ll d and thereof the counds of my lord othello what is this bus ena precans the counds of the wer and therein your cang
+___________________________________________________________________________
+BPE k = 400
+n_epochs = 15
+____________________________________________________________________________________________________
+RMSpror initial learning rate = 0.3
+RMSprop rho = 0.9
+RMS test score = 6.26259708404541
+__________________________________________________
+RMS text = k eausuppear thiglight such angently am purpare we are for we all venids than thou off thou oft up i had dreach thee from his biglight and souse suppear procel st not yourest thou wit the indoromeo o most cover did dius souse suppear thee go i had with him bids than a logues coinature this bimade you bosom true friar ere we must dians honour to make shother sick away tis a man that is made purk eat up to me face the indeed gentle of racounten the frest to me face nouse subigently i begues chastward fieuphans in place what wor
+___________________________________________________________________________
+SGD initial learning rate = 0.5
+SDG learning rate decay per epoch = 0.95
+SGD test score = 67.52611541748047
+__________________________________________________
+SGD text = k for you are not be sed to be ger and brown to the fold to the ft thou hastand i ll d i will i ll d i am not in the sed and i am cleopatra o the slex d and brown and bus caesar s the ger of your hands and the gafear and the gafear the sed with the soul and the soul d and the slepity and brown d in a cknoble to my hand i ll me i am not be gef i am cleopatra charge and i will you have a cknoble to be geen ger and bessough i will i will i ll d and i am i ll you have a ckice and i will not be charmight i am cleopatra i will not so soul to my father and 
+___________________________________________________________________________
+BPE k = 400
+n_epochs = 15
+____________________________________________________________________________________________________
+RMSpror initial learning rate = 0.3
+RMSprop rho = 0.9
+RMS test score = 6.386654853820801
+__________________________________________________
+RMS text = k t of all shall go on the ving one let the bloss very offive and bonius there on wife igreat droul and there on dull the world the worn sca o i blosoown bonly part is muting a o i will do blosmade of all the bonly too lylown meror both i bong and bus prooft denchs thee heeks have father are well jure holy pared by cour comphover more the blot of dead hair hip thence sainsmade that the ving a he be from this night s thee heech blown look what you can speak cassius prooff thou guariever did suspledrosmade that i digareve and bon
+___________________________________________________________________________
+SGD initial learning rate = 0.5
+SDG learning rate decay per epoch = 0.95
+SGD test score = 67.59567260742188
+__________________________________________________
+SGD text = k and banger d the wea and sold me the words and slepitoger to the world and bring in this is the weach you have a blday that you are the words and sold me i will be gentle and ses and brough i ll me the world and bring in the words to be ger d and i will you and i ll you have you and soliet and solia soliet and ses and bring of his live you are not be gentertes and brons the cooolia ses the world me the words the chark d the wea d and sold me i will not so ft the woman el d the cold to be a countercolia s
+___________________________________________________________________________

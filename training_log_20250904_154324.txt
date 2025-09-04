@@ -1,0 +1,123 @@
+____________________________________________________________________________________________________
+Testing: K=400, lr=0.0001, layers=4, embed_dim=32, heads=4, max_context=128
+___________________________________________________________________________
+Epoch 1/5 completed.
+ Avg Train Loss: 5.6993,
+ Avg Val Loss: 5.6029
+__________________________________________________
+Epoch 2/5 completed.
+ Avg Train Loss: 5.5611,
+ Avg Val Loss: 5.5424
+__________________________________________________
+Epoch 3/5 completed.
+ Avg Train Loss: 5.4667,
+ Avg Val Loss: 5.4196
+__________________________________________________
+Epoch 4/5 completed.
+ Avg Train Loss: 5.3237,
+ Avg Val Loss: 5.2823
+__________________________________________________
+Epoch 5/5 completed.
+ Avg Train Loss: 5.1963,
+ Avg Val Loss: 5.1743
+__________________________________________________
+Current best val loss: 5.17432
+____________________________________________________________________________________________________
+Testing: K=400, lr=0.0001, layers=4, embed_dim=64, heads=4, max_context=128
+___________________________________________________________________________
+Epoch 1/5 completed.
+ Avg Train Loss: 5.6151,
+ Avg Val Loss: 5.4865
+__________________________________________________
+Epoch 2/5 completed.
+ Avg Train Loss: 5.3112,
+ Avg Val Loss: 5.1795
+__________________________________________________
+Epoch 3/5 completed.
+ Avg Train Loss: 5.0339,
+ Avg Val Loss: 4.9727
+__________________________________________________
+Epoch 4/5 completed.
+ Avg Train Loss: 4.8561,
+ Avg Val Loss: 4.8346
+__________________________________________________
+Epoch 5/5 completed.
+ Avg Train Loss: 4.7292,
+ Avg Val Loss: 4.7350
+__________________________________________________
+Current best val loss: 4.73497
+____________________________________________________________________________________________________
+Testing: K=400, lr=0.0001, layers=4, embed_dim=128, heads=4, max_context=128
+___________________________________________________________________________
+Epoch 1/5 completed.
+ Avg Train Loss: 5.3770,
+ Avg Val Loss: 5.0374
+__________________________________________________
+Epoch 2/5 completed.
+ Avg Train Loss: 4.8029,
+ Avg Val Loss: 4.7021
+__________________________________________________
+Epoch 3/5 completed.
+ Avg Train Loss: 4.5652,
+ Avg Val Loss: 4.5569
+__________________________________________________
+Epoch 4/5 completed.
+ Avg Train Loss: 4.4455,
+ Avg Val Loss: 4.4785
+__________________________________________________
+Epoch 5/5 completed.
+ Avg Train Loss: 4.3725,
+ Avg Val Loss: 4.4378
+__________________________________________________
+Current best val loss: 4.43784
+____________________________________________________________________________________________________
+Generated text after grid search:
+ the tragep of the b and ss the c the cold of the sold and sed of the cooil of the b and bangeen the bandrough the so
+____________________________________________________________________________________________________
+Training best grid search model
+___________________________________________________________________________
+Epoch 1/30 completed.
+ Avg Train Loss: 4.3246,
+ Avg Val Loss: 4.4166
+__________________________________________________
+Epoch 2/30 completed.
+ Avg Train Loss: 4.2820,
+ Avg Val Loss: 4.4027
+__________________________________________________
+Epoch 3/30 completed.
+ Avg Train Loss: 4.2486,
+ Avg Val Loss: 4.3877
+__________________________________________________
+Epoch 4/30 completed.
+ Avg Train Loss: 4.2157,
+ Avg Val Loss: 4.3815
+__________________________________________________
+Epoch 5/30 completed.
+ Avg Train Loss: 4.1846,
+ Avg Val Loss: 4.3785
+__________________________________________________
+Epoch 6/30 completed.
+ Avg Train Loss: 4.1548,
+ Avg Val Loss: 4.3756
+__________________________________________________
+Epoch 7/30 completed.
+ Avg Train Loss: 4.1247,
+ Avg Val Loss: 4.3892
+__________________________________________________
+No improvement for 1 epochs
+Epoch 8/30 completed.
+ Avg Train Loss: 4.0961,
+ Avg Val Loss: 4.3821
+__________________________________________________
+No improvement for 2 epochs
+Epoch 9/30 completed.
+ Avg Train Loss: 4.0661,
+ Avg Val Loss: 4.3853
+__________________________________________________
+No improvement for 3 epochs
+Early stopping triggered after 9 epochs
+Generated text after grid search and specicif best model training:
+ the tragel of a cold a great the bones and the soldius caesar i will you to breat the blood of the wealue of my dends the sleman and a 
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+Saved loss plot as nano_GPT_loss_history_20250904_160246.png

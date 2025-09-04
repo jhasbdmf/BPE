@@ -1,0 +1,145 @@
+____________________________________________________________________________________________________
+Testing: K=400, lr=0.0001, layers=4, embed_dim=64, heads=4, max_context=128
+___________________________________________________________________________
+Epoch 1/5 completed.
+ Avg Train Loss: 5.6117,
+ Avg Val Loss: 5.4656
+__________________________________________________
+Epoch 2/5 completed.
+ Avg Train Loss: 5.2833,
+ Avg Val Loss: 5.1513
+__________________________________________________
+Epoch 3/5 completed.
+ Avg Train Loss: 5.0122,
+ Avg Val Loss: 4.9506
+__________________________________________________
+Epoch 4/5 completed.
+ Avg Train Loss: 4.8442,
+ Avg Val Loss: 4.8174
+__________________________________________________
+Epoch 5/5 completed.
+ Avg Train Loss: 4.7203,
+ Avg Val Loss: 4.7184
+__________________________________________________
+Current best val loss: 4.71836
+____________________________________________________________________________________________________
+Generated text after grid search:
+ the trageven i will not and i have the wer and to the claught to you are the cangeven i will not the candaday and bus i have a since and the coo
+____________________________________________________________________________________________________
+Training best grid search model
+___________________________________________________________________________
+Epoch 1/30 completed.
+ Avg Train Loss: 4.6285,
+ Avg Val Loss: 4.6430
+__________________________________________________
+Epoch 2/30 completed.
+ Avg Train Loss: 4.5558,
+ Avg Val Loss: 4.5938
+__________________________________________________
+Epoch 3/30 completed.
+ Avg Train Loss: 4.5017,
+ Avg Val Loss: 4.5535
+__________________________________________________
+Epoch 4/30 completed.
+ Avg Train Loss: 4.4605,
+ Avg Val Loss: 4.5205
+__________________________________________________
+Epoch 5/30 completed.
+ Avg Train Loss: 4.4273,
+ Avg Val Loss: 4.4986
+__________________________________________________
+Epoch 6/30 completed.
+ Avg Train Loss: 4.3998,
+ Avg Val Loss: 4.4817
+__________________________________________________
+Epoch 7/30 completed.
+ Avg Train Loss: 4.3768,
+ Avg Val Loss: 4.4652
+__________________________________________________
+Epoch 8/30 completed.
+ Avg Train Loss: 4.3575,
+ Avg Val Loss: 4.4572
+__________________________________________________
+Epoch 9/30 completed.
+ Avg Train Loss: 4.3396,
+ Avg Val Loss: 4.4480
+__________________________________________________
+Epoch 10/30 completed.
+ Avg Train Loss: 4.3240,
+ Avg Val Loss: 4.4360
+__________________________________________________
+Epoch 11/30 completed.
+ Avg Train Loss: 4.3089,
+ Avg Val Loss: 4.4247
+__________________________________________________
+Epoch 12/30 completed.
+ Avg Train Loss: 4.2951,
+ Avg Val Loss: 4.4239
+__________________________________________________
+Epoch 13/30 completed.
+ Avg Train Loss: 4.2833,
+ Avg Val Loss: 4.4197
+__________________________________________________
+Epoch 14/30 completed.
+ Avg Train Loss: 4.2718,
+ Avg Val Loss: 4.4161
+__________________________________________________
+Epoch 15/30 completed.
+ Avg Train Loss: 4.2609,
+ Avg Val Loss: 4.4126
+__________________________________________________
+Epoch 16/30 completed.
+ Avg Train Loss: 4.2515,
+ Avg Val Loss: 4.4114
+__________________________________________________
+Epoch 17/30 completed.
+ Avg Train Loss: 4.2414,
+ Avg Val Loss: 4.4106
+__________________________________________________
+Epoch 18/30 completed.
+ Avg Train Loss: 4.2327,
+ Avg Val Loss: 4.4098
+__________________________________________________
+Epoch 19/30 completed.
+ Avg Train Loss: 4.2226,
+ Avg Val Loss: 4.4186
+__________________________________________________
+No improvement for 1 epochs
+Epoch 20/30 completed.
+ Avg Train Loss: 4.2143,
+ Avg Val Loss: 4.4078
+__________________________________________________
+Epoch 21/30 completed.
+ Avg Train Loss: 4.2051,
+ Avg Val Loss: 4.4058
+__________________________________________________
+Epoch 22/30 completed.
+ Avg Train Loss: 4.1974,
+ Avg Val Loss: 4.4139
+__________________________________________________
+No improvement for 1 epochs
+Epoch 23/30 completed.
+ Avg Train Loss: 4.1892,
+ Avg Val Loss: 4.4010
+__________________________________________________
+Epoch 24/30 completed.
+ Avg Train Loss: 4.1816,
+ Avg Val Loss: 4.4035
+__________________________________________________
+No improvement for 1 epochs
+Epoch 25/30 completed.
+ Avg Train Loss: 4.1736,
+ Avg Val Loss: 4.4030
+__________________________________________________
+No improvement for 2 epochs
+Epoch 26/30 completed.
+ Avg Train Loss: 4.1662,
+ Avg Val Loss: 4.4077
+__________________________________________________
+No improvement for 3 epochs
+Early stopping triggered after 26 epochs
+Generated text after grid search and specicif best model training:
+ the tragemia ct and i have not be daflt and i ll be a col and i will not a bles to you have belies i have better i will be a sinded to the counded to the ss and bressiefook and to the counturse of the bled and i have you shall be the brouse of my bldabring to the bray to the tragentleel of my lord pt of the bill of the c d the ss to the ct and the bressooool and the ss of the ss and i corn d and bill be soooil and the ss of the ct of egemes of the brabil and i have bldased and ss the sed and bldrain the ss of the ct of this biturnattried of epured and blt of the sed and the brain his blt of emes and the ct to the ct of the ct and the ct of the bldabilutriving and ss the col and the ct bil and bill the sed bil d and the soilding to the coill of emes of his trieding of biluldrail of the cooooooooot and the sed and sed and sed and ss of the bil d ct and the sed to the bil of the blt brailt and the soill of the bitriegried and the bice and the seast of the ct and the seace of el of el and sed and bitrain his bitried of the coil and brain the bluldaulult of the bice of the cans and bil and the brabi
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+Saved loss plot as nano_GPT_loss_history_20250904_163157.png
