@@ -413,9 +413,9 @@ for K in K_values:
 # Define other hyperparameters to search over
 hyperparams = {
     'vocab_size': K_values,
-    'lr': [1e-3],
-    'n_layers': [4],
-    'embed_dim': [32],
+    'lr': [1e-3, 5e-3],
+    'n_layers': [4, 8],
+    'embed_dim': [8, 16, 32, 64, 128],
     'num_heads': [4],
     'max_context': [128]
 }
@@ -426,7 +426,7 @@ best_grid_search_train_loss_hist, best_grid_search_val_loss_hist, best_model, be
     train_tokens_raw=train_tokens_raw,
     val_tokens_raw=val_tokens_raw,
     #vocab=None,  
-    n_epochs=1
+    n_epochs=5
 )
 
 
@@ -485,7 +485,7 @@ val_input_batches = create_batches(val_inputs, best_model.max_seq_len)
 val_target_batches = create_batches(val_targets, best_model.max_seq_len)
 
 # Optionally, continue training the best model for more epochs
-additional_epochs = 2  # Set desired additional epochs
+additional_epochs = 20  # Set desired additional epochs
 learning_rate = best_params['learning_rate']
 
 log_message("Training best grid search model", filename)
